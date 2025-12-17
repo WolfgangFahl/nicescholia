@@ -74,17 +74,25 @@ class Dashboard:
 
         rows = []
         for key, ep in endpoints_data.items():
+            # Prefer checking the website URL over the SPARQL endpoint
+            # SPARQL endpoints often don't respond well to simple GET requests
+            check_url = getattr(ep, "website", None)
+            if not check_url:
+                # Fall back to endpoint if no website is available
+                check_url = getattr(ep, "endpoint", getattr(ep, "url", ""))
+
             ep_url = getattr(ep, "endpoint", getattr(ep, "url", ""))
             ep_name = getattr(ep, "name", key)
             ep_group = getattr(ep, "group", "General")
 
-            link_html = Link.create(ep_url, "Link")
+            link_html = Link.create(check_url if hasattr(ep, "website") else ep_url, "Link")
 
             rows.append(
                 {
                     "group": ep_group,
                     "name": ep_name,
-                    "url": ep_url,
+                    "url": check_url,  # URL to check for availability
+                    "endpoint_url": ep_url,  # Original SPARQL endpoint
                     "link": link_html,
                     "status": "Pending",
                     "latency": 0.0,
@@ -105,7 +113,7 @@ class Dashboard:
                 "headerName": "URL",
                 "field": "link",
                 "width": 70,
-            },  # HTML rendered via html_columns
+            },
             {"headerName": "Status", "field": "status", "sortable": True, "flex": 1},
             {
                 "headerName": "Latency (s)",
@@ -116,30 +124,22 @@ class Dashboard:
             },
         ]
 
-        # Define styles and behavior in the options dictionary
         grid_options = {
             "rowSelection": "single",
             "animateRows": True,
-            # This fixes the original error. We treat this as a standard AgGrid callback string.
             ":getRowStyle": """(params) => {
                 return { background: params.data.color };
             }""",
         }
 
-        # Configure the ListOfDictsGrid
         config = GridConfig(
             column_defs=column_defs,
-            key_col="url",  # Use URL as the unique key
-            options=grid_options,  # Pass the options mapping
-            html_columns=[
-                2
-            ],  # Index of the 'link' column (0-based index of visible cols)
+            key_col="url",
+            options=grid_options,
+            html_columns=[2],
             auto_size_columns=True,
-            theme="balham",  # Optional: 'ag-theme-balham' or 'material'
+            theme="balham",
         )
 
-        # Instantiate the grid wrapper
         self.grid = ListOfDictsGrid(lod=rows, config=config)
-
-        # Trigger one check initially (optional)
         ui.timer(0.5, self.check_all, once=True)
