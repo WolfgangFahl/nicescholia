@@ -1,0 +1,2 @@
+# nicescholia
+nicegui based scholia
