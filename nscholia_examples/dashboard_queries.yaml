@@ -1,0 +1,48 @@
+#
+# Sample Queries for nicescholia dashboard
+# WF 2025-12-17
+'WikidataUpdateState':
+  title: Wikidata state
+  description: Returns total triple count and dateModified of the Wikidata root node
+  short_urls:
+    wikidata: https://w.wiki/GEGh
+    wikidata-scholarly: https://w.wiki/GEH3
+    wikidata-legacy-full: https://w.wiki/GEHu
+
+  sparql: |
+    # show the number of triples and the timestamp of the last modification
+    # see https://github.com/WolfgangFahl/pyLoDStorage/issues/143
+    PREFIX schema: <http://schema.org/>
+
+    SELECT
+      (?count as ?tripleCount)
+      ?dateModified
+      (STR(?dateModified) as ?timestamp)
+    WHERE {
+      {
+        SELECT (COUNT(*) AS ?count) {
+          ?s ?p ?o
+        }
+      }
+      OPTIONAL {
+        <http://www.wikidata.org> schema:dateModified ?dateModified
+      }
+    }
+'QLeverUpdateState':
+  title: QLever Update State
+  description: Get the timestamp up to which updates are complete in QLever
+  sparql: |
+    PREFIX wikibase: <http://wikiba.se/ontology#>
+    PREFIX schema: <http://schema.org/>
+    SELECT * WHERE {
+      {
+        SELECT (MIN(?date_modified) AS ?updates_complete_until) {
+          wikibase:Dump schema:dateModified ?date_modified
+        }
+      }
+      UNION {
+        wikibase:Dump wikibase:updatesCompleteUntil ?updates_complete_until
+      }
+    }
+    ORDER BY DESC(?updates_complete_until)
+    LIMIT 1

@@ -1,5 +1,3 @@
-# Adjust this import based on where you saved the provided ListOfDictsGrid code
-# Example: from nscholia.lod_grid import ListOfDictsGrid, GridConfig
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.widgets import Link
 from nicegui import ui
