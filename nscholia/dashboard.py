@@ -13,6 +13,14 @@ class Dashboard:
     UI for monitoring endpoints using ListOfDictsGrid.
     """
 
+    # Color constants for different states
+    COLORS = {
+        'checking': '#f0f0f0',   # Light gray
+        'success': '#d1fae5',    # Light green - endpoint online and update query works
+        'warning': '#fef3c7',    # Light yellow - endpoint online but update query fails
+        'error': '#fee2e2',      # Light red - endpoint offline/unreachable
+    }
+
     def __init__(self, solution):
         self.solution = solution
         self.webserver = solution.webserver
@@ -34,7 +42,7 @@ class Dashboard:
         for row in rows:
             # Visual update for checking state
             row["status"] = "Checking..."
-            row["color"] = "#f0f0f0"  # Light gray
+            row["color"] = self.COLORS['checking']
             row["triples"] = 0
             row["timestamp"] = ""
 
@@ -47,47 +55,64 @@ class Dashboard:
                 # First check if endpoint is online
                 result = await Monitor.check(url)
 
-                # Update basic availability result
+                # Update based on availability
                 if result.is_online:
                     row["status"] = f"Online ({result.status_code})"
                     row["latency"] = result.latency
-                    row["color"] = "#d1fae5"  # light green
 
-                    # Now get update state information (triples & timestamp)
+                    # Now try to get update state information (triples & timestamp)
                     ep_key = row["endpoint_key"]
                     endpoints_data = self.endpoints_provider.get_endpoints()
 
+                    update_success = False
                     if ep_key in endpoints_data:
                         ep = endpoints_data[ep_key]
-                        # Run update state query in executor to avoid blocking
-                        update_state = await asyncio.get_event_loop().run_in_executor(
-                            None, UpdateState.from_endpoint, self.endpoints_provider, ep
-                        )
+                        try:
+                            # Run update state query in executor to avoid blocking
+                            update_state = await asyncio.get_event_loop().run_in_executor(
+                                None, UpdateState.from_endpoint, self.endpoints_provider, ep
+                            )
 
-                        if update_state.success:
-                            row["triples"] = update_state.triples or 0
-                            row["timestamp"] = update_state.timestamp or ""
-                        else:
+                            if update_state.success:
+                                # SUCCESS: Endpoint online AND update query succeeded
+                                row["triples"] = update_state.triples or 0
+                                row["timestamp"] = update_state.timestamp or ""
+                                row["color"] = self.COLORS['success']
+                                update_success = True
+                            else:
+                                # WARNING: Endpoint online BUT update query failed
+                                row["triples"] = 0
+                                row["timestamp"] = update_state.error or "N/A"
+                                row["status"] = f"Online ({result.status_code}) ⚠️ {update_state.error or 'Update query failed'}"
+                                row["color"] = self.COLORS['warning']
+
+                        except Exception as update_ex:
+                            # WARNING: Endpoint online BUT update query threw exception
                             row["triples"] = 0
-                            row["timestamp"] = update_state.error or "N/A"
-                            # Optionally adjust status if update query failed
-                            if update_state.error:
-                                row[
-                                    "status"
-                                ] += f" (Update query: {update_state.error})"
+                            row["timestamp"] = str(update_ex)
+                            row["status"] = f"Online ({result.status_code}) ⚠️ Update error: {str(update_ex)}"
+                            row["color"] = self.COLORS['warning']
+
+                    # If no update state check was attempted or key not found
+                    if not update_success and row["color"] == self.COLORS['checking']:
+                        row["color"] = self.COLORS['warning']
+                        row["status"] += " (No update data)"
+
                 else:
+                    # ERROR: Endpoint offline/unreachable
                     row["status"] = result.error or f"Error {result.status_code}"
                     row["latency"] = 0
                     row["triples"] = 0
                     row["timestamp"] = ""
-                    row["color"] = "#fee2e2"  # light red
+                    row["color"] = self.COLORS['error']
 
             except Exception as ex:
-                row["status"] = str(ex)
+                # ERROR: Exception during availability check
+                row["status"] = f"Exception: {str(ex)}"
                 row["latency"] = 0
                 row["triples"] = 0
                 row["timestamp"] = ""
-                row["color"] = "#fee2e2"
+                row["color"] = self.COLORS['error']
 
         # Final update to show results
         self.grid.update()
@@ -100,6 +125,12 @@ class Dashboard:
         with ui.row().classes("w-full items-center mb-4"):
             ui.label("Endpoint Monitor").classes("text-2xl font-bold")
             ui.button("Refresh", icon="refresh", on_click=self.check_all)
+
+            # Add legend
+            with ui.row().classes("ml-auto gap-4"):
+                ui.label("🟢 Success").classes("text-sm")
+                ui.label("🟡 Warning").classes("text-sm")
+                ui.label("🔴 Error").classes("text-sm")
 
         # 1. Fetch data
         endpoints_data = self.endpoints_provider.get_endpoints()
