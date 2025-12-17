@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nicescholia"
-version = "0.0.1"
 description = "nicegui based Scholia"
 authors = [
   {name = "Wolfgang Fahl", email = "wf@bitplan.com"}
@@ -60,4 +59,3 @@ only-include = ["nscholia", "nscholia_examples"]
 
 [project.scripts]
 nicescholia = "nscholia.cmd:main"
-
