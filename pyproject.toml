@@ -16,7 +16,7 @@ dependencies = [
   # https://github.com/WolfgangFahl/nicegui_widgets
   "ngwidgets>=0.30.3",
   # https://github.com/WolfgangFahl/snapquery
-  "snapquery>=0.2.4",
+  "snapquery>=0.2.5",
   # https://github.com/encode/httpx
   "httpx>=0.27.0",
 ]
