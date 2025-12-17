@@ -9,7 +9,7 @@ import traceback
 
 from basemkit.basetest import Basetest
 from lodstorage.query import QueryManager
-from nscholia.endpoints import Endpoints
+from nscholia.endpoints import Endpoints, UpdateState
 
 from tests.action_stats import ActionStats
 
@@ -40,45 +40,13 @@ class TestUpdateState(Basetest):
         results_by_endpoint = {}
 
         for ep_name, ep in self.endpoints.items():
-            # Select query based on database type
-            query_name = None
-
-            if ep.database == 'blazegraph' and 'wikidata' in ep_name.lower():
-                query_name = 'WikidataUpdateState'
-            elif ep.database == 'qlever':
-                query_name = 'QLeverUpdateState'  # or whatever the actual query name is
-            else:
-                if debug:
-                    print(f"Skipping {ep_name} - no suitable query")
-                continue
-
-            if query_name not in self.qm.queriesByName:
-                if debug:
-                    print(f"Query '{query_name}' not found, skipping {ep_name}")
-                continue
-
-            query = self.qm.queriesByName[query_name]
             if debug:
                 print(f"\nTesting: {ep_name}")
-
             try:
-                query.endpoint=ep.endpoint
-                qlod = self.em.runQuery(query)
-                success = qlod and len(qlod) > 0
-
-                if success:
-                    result = qlod[0]
-                    results_by_endpoint[ep_name] = result
-
-                    if debug:
-                        print(stats.state(
-                            f"Got data for {ep_name}",
-                            f"No data for {ep_name}"
-                        ))
-                        for key, value in result.items():
-                            print(f"  {key}: {value}")
-
-                stats.add(success)
+                update_state=UpdateState.from_endpoint(self.em, ep)
+                if debug:
+                    print(update_state)
+                stats.add(update_state.success)
 
             except Exception as ex:
                 stats.add(False)

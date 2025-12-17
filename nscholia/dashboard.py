@@ -1,8 +1,9 @@
+import asyncio
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.widgets import Link
 from nicegui import ui
 
-from nscholia.endpoints import Endpoints
+from nscholia.endpoints import Endpoints, UpdateState
 from nscholia.monitor import Monitor
 
 
@@ -30,29 +31,59 @@ class Dashboard:
         rows = self.grid.lod
 
         for row in rows:
-            # Visual update extracting checking state
+            # Visual update for checking state
             row["status"] = "Checking..."
             row["color"] = "#f0f0f0"  # Light gray
+            row["triples"] = 0
+            row["timestamp"] = ""
 
             # Update the grid view to show 'Checking...' state immediately
             self.grid.update()
 
             # Async check
-            # row['url'] contains the SPARQL endpoint URL
             try:
-                result = await Monitor.check(row["url"])
+                url = row["url"]
+                # First check if endpoint is online
+                result = await Monitor.check(url)
 
-                # Update result
+                # Update basic availability result
                 if result.is_online:
                     row["status"] = f"Online ({result.status_code})"
                     row["latency"] = result.latency
                     row["color"] = "#d1fae5"  # light green
+
+                    # Now get update state information (triples & timestamp)
+                    ep_key = row["endpoint_key"]
+                    endpoints_data = self.endpoints_provider.get_endpoints()
+
+                    if ep_key in endpoints_data:
+                        ep = endpoints_data[ep_key]
+                        # Run update state query in executor to avoid blocking
+                        update_state = await asyncio.get_event_loop().run_in_executor(
+                            None, UpdateState.from_endpoint, self.endpoints_provider, ep
+                        )
+
+                        if update_state.success:
+                            row["triples"] = update_state.triples or 0
+                            row["timestamp"] = update_state.timestamp or ""
+                        else:
+                            row["triples"] = 0
+                            row["timestamp"] = update_state.error or "N/A"
+                            # Optionally adjust status if update query failed
+                            if update_state.error:
+                                row["status"] += f" (Update query: {update_state.error})"
                 else:
                     row["status"] = result.error or f"Error {result.status_code}"
                     row["latency"] = 0
+                    row["triples"] = 0
+                    row["timestamp"] = ""
                     row["color"] = "#fee2e2"  # light red
+
             except Exception as ex:
                 row["status"] = str(ex)
+                row["latency"] = 0
+                row["triples"] = 0
+                row["timestamp"] = ""
                 row["color"] = "#fee2e2"
 
         # Final update to show results
@@ -73,10 +104,8 @@ class Dashboard:
         rows = []
         for key, ep in endpoints_data.items():
             # Prefer checking the website URL over the SPARQL endpoint
-            # SPARQL endpoints often don't respond well to simple GET requests
             check_url = getattr(ep, "website", None)
             if not check_url:
-                # Fall back to endpoint if no website is available
                 check_url = getattr(ep, "endpoint", getattr(ep, "url", ""))
 
             ep_url = getattr(ep, "endpoint", getattr(ep, "url", ""))
@@ -91,9 +120,12 @@ class Dashboard:
                     "name": ep_name,
                     "url": check_url,  # URL to check for availability
                     "endpoint_url": ep_url,  # Original SPARQL endpoint
+                    "endpoint_key": key,  # Store the key for later lookup
                     "link": link_html,
                     "status": "Pending",
                     "latency": 0.0,
+                    "triples": 0,
+                    "timestamp": "",
                     "color": "#ffffff",
                 }
             )
@@ -112,13 +144,33 @@ class Dashboard:
                 "field": "link",
                 "width": 70,
             },
-            {"headerName": "Status", "field": "status", "sortable": True, "flex": 1},
+            {
+                "headerName": "Status",
+                "field": "status",
+                "sortable": True,
+                "flex": 2,
+            },
             {
                 "headerName": "Latency (s)",
                 "field": "latency",
                 "sortable": True,
                 "width": 120,
                 "type": "numericColumn",
+                "valueFormatter": "params.value ? params.value.toFixed(3) : '0.000'",
+            },
+            {
+                "headerName": "Triples",
+                "field": "triples",
+                "sortable": True,
+                "width": 130,
+                "type": "numericColumn",
+                "valueFormatter": "params.value ? params.value.toLocaleString() : '0'",
+            },
+            {
+                "headerName": "Last Update",
+                "field": "timestamp",
+                "sortable": True,
+                "width": 200,
             },
         ]
 

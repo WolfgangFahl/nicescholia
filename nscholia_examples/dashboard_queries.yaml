@@ -1,6 +1,13 @@
 #
 # Sample Queries for nicescholia dashboard
 # WF 2025-12-17
+'TripleCount':
+  title: Generic Triple Count
+  description: Returns total triple count for any SPARQL endpoint
+  sparql: |
+    SELECT (COUNT(*) AS ?tripleCount) WHERE {
+      ?s ?p ?o
+    }
 'WikidataUpdateState':
   title: Wikidata state
   description: Returns total triple count and dateModified of the Wikidata root node
