@@ -351,8 +351,35 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.Endpoints.runQuery" class="md-nav__link">
+    <span class="md-ellipsis">
+      runQuery
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.Endpoints.update_state_query_for_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_state_query_for_endpoint
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.UpdateState" class="md-nav__link">
+    <span class="md-ellipsis">
+      UpdateState
+    </span>
+  </a>
   
 </li>
         
@@ -377,6 +404,21 @@
       Monitor
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Monitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.monitor.Monitor.check" class="md-nav__link">
+    <span class="md-ellipsis">
+      check
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -610,8 +652,35 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.Endpoints.runQuery" class="md-nav__link">
+    <span class="md-ellipsis">
+      runQuery
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.Endpoints.update_state_query_for_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_state_query_for_endpoint
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.endpoints.UpdateState" class="md-nav__link">
+    <span class="md-ellipsis">
+      UpdateState
+    </span>
+  </a>
   
 </li>
         
@@ -636,6 +705,21 @@
       Monitor
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Monitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nscholia.monitor.Monitor.check" class="md-nav__link">
+    <span class="md-ellipsis">
+      check
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1061,7 +1145,62 @@
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Dashboard</span><span class="p">:</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Dashboard</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    UI for monitoring endpoints using ListOfDictsGrid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1085,29 +1224,61 @@
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">lod</span>
 
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-            <span class="c1"># Visual update extracting checking state</span>
+            <span class="c1"># Visual update for checking state</span>
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Checking...&quot;</span>
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#f0f0f0&quot;</span>  <span class="c1"># Light gray</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
             <span class="c1"># Update the grid view to show &#39;Checking...&#39; state immediately</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
             <span class="c1"># Async check</span>
-            <span class="c1"># row[&#39;url&#39;] contains the SPARQL endpoint URL</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+                <span class="c1"># First check if endpoint is online</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-                <span class="c1"># Update result</span>
+                <span class="c1"># Update basic availability result</span>
                 <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">is_online</span><span class="p">:</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Online (</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">)&quot;</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">latency</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#d1fae5&quot;</span>  <span class="c1"># light green</span>
+
+                    <span class="c1"># Now get update state information (triples &amp; timestamp)</span>
+                    <span class="n">ep_key</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;endpoint_key&quot;</span><span class="p">]</span>
+                    <span class="n">endpoints_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_provider</span><span class="o">.</span><span class="n">get_endpoints</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">ep_key</span> <span class="ow">in</span> <span class="n">endpoints_data</span><span class="p">:</span>
+                        <span class="n">ep</span> <span class="o">=</span> <span class="n">endpoints_data</span><span class="p">[</span><span class="n">ep_key</span><span class="p">]</span>
+                        <span class="c1"># Run update state query in executor to avoid blocking</span>
+                        <span class="n">update_state</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                            <span class="kc">None</span><span class="p">,</span> <span class="n">UpdateState</span><span class="o">.</span><span class="n">from_endpoint</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_provider</span><span class="p">,</span> <span class="n">ep</span>
+                        <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">update_state</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">triples</span> <span class="ow">or</span> <span class="mi">0</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">timestamp</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">error</span> <span class="ow">or</span> <span class="s2">&quot;N/A&quot;</span>
+                            <span class="c1"># Optionally adjust status if update query failed</span>
+                            <span class="k">if</span> <span class="n">update_state</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                                <span class="n">row</span><span class="p">[</span>
+                                    <span class="s2">&quot;status&quot;</span>
+                                <span class="p">]</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (Update query: </span><span class="si">{</span><span class="n">update_state</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">)&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">error</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;Error </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                     <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#fee2e2&quot;</span>  <span class="c1"># light red</span>
+
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#fee2e2&quot;</span>
 
         <span class="c1"># Final update to show results</span>
@@ -1127,20 +1298,31 @@
 
         <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">endpoints_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Prefer checking the website URL over the SPARQL endpoint</span>
+            <span class="n">check_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;website&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_url</span><span class="p">:</span>
+                <span class="n">check_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;endpoint&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
             <span class="n">ep_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;endpoint&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
             <span class="n">ep_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="n">ep_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;General&quot;</span><span class="p">)</span>
 
-            <span class="n">link_html</span> <span class="o">=</span> <span class="n">Link</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ep_url</span><span class="p">,</span> <span class="s2">&quot;Link&quot;</span><span class="p">)</span>
+            <span class="n">link_html</span> <span class="o">=</span> <span class="n">Link</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">check_url</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;website&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">ep_url</span><span class="p">,</span> <span class="s2">&quot;Link&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="n">ep_group</span><span class="p">,</span>
                     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ep_name</span><span class="p">,</span>
-                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">ep_url</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">check_url</span><span class="p">,</span>  <span class="c1"># URL to check for availability</span>
+                    <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="n">ep_url</span><span class="p">,</span>  <span class="c1"># Original SPARQL endpoint</span>
+                    <span class="s2">&quot;endpoint_key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>  <span class="c1"># Store the key for later lookup</span>
                     <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">link_html</span><span class="p">,</span>
                     <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Pending&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;latency&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                    <span class="s2">&quot;triples&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
@@ -1158,43 +1340,55 @@
                 <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;URL&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;link&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
-            <span class="p">},</span>  <span class="c1"># HTML rendered via html_columns</span>
-            <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">},</span>
             <span class="p">{</span>
                 <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Latency (s)&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;latency&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                 <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numericColumn&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;valueFormatter&quot;</span><span class="p">:</span> <span class="s2">&quot;params.value ? params.value.toFixed(3) : &#39;0.000&#39;&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Triples&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;triples&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numericColumn&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;valueFormatter&quot;</span><span class="p">:</span> <span class="s2">&quot;params.value ? params.value.toLocaleString() : &#39;0&#39;&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Last Update&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">]</span>
 
-        <span class="c1"># Define styles and behavior in the options dictionary</span>
         <span class="n">grid_options</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;rowSelection&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
             <span class="s2">&quot;animateRows&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="c1"># This fixes the original error. We treat this as a standard AgGrid callback string.</span>
             <span class="s2">&quot;:getRowStyle&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;(params) =&gt; {</span>
 <span class="s2">                return { background: params.data.color };</span>
 <span class="s2">            }&quot;&quot;&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="c1"># Configure the ListOfDictsGrid</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">GridConfig</span><span class="p">(</span>
             <span class="n">column_defs</span><span class="o">=</span><span class="n">column_defs</span><span class="p">,</span>
-            <span class="n">key_col</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">,</span>  <span class="c1"># Use URL as the unique key</span>
-            <span class="n">options</span><span class="o">=</span><span class="n">grid_options</span><span class="p">,</span>  <span class="c1"># Pass the options mapping</span>
-            <span class="n">html_columns</span><span class="o">=</span><span class="p">[</span>
-                <span class="mi">2</span>
-            <span class="p">],</span>  <span class="c1"># Index of the &#39;link&#39; column (0-based index of visible cols)</span>
+            <span class="n">key_col</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">grid_options</span><span class="p">,</span>
+            <span class="n">html_columns</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
             <span class="n">auto_size_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;balham&quot;</span><span class="p">,</span>  <span class="c1"># Optional: &#39;ag-theme-balham&#39; or &#39;material&#39;</span>
+            <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;balham&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Instantiate the grid wrapper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">ListOfDictsGrid</span><span class="p">(</span><span class="n">lod</span><span class="o">=</span><span class="n">rows</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-
-        <span class="c1"># Trigger one check initially (optional)</span>
         <span class="n">ui</span><span class="o">.</span><span class="n">timer</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_all</span><span class="p">,</span> <span class="n">once</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1269,7 +1463,39 @@
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span>
-<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">check_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">check_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run checks for all endpoints in the grid&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">:</span>
         <span class="k">return</span>
@@ -1280,29 +1506,61 @@
     <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">lod</span>
 
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-        <span class="c1"># Visual update extracting checking state</span>
+        <span class="c1"># Visual update for checking state</span>
         <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Checking...&quot;</span>
         <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#f0f0f0&quot;</span>  <span class="c1"># Light gray</span>
+        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="c1"># Update the grid view to show &#39;Checking...&#39; state immediately</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
         <span class="c1"># Async check</span>
-        <span class="c1"># row[&#39;url&#39;] contains the SPARQL endpoint URL</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+            <span class="c1"># First check if endpoint is online</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-            <span class="c1"># Update result</span>
+            <span class="c1"># Update basic availability result</span>
             <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">is_online</span><span class="p">:</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Online (</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">)&quot;</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">latency</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#d1fae5&quot;</span>  <span class="c1"># light green</span>
+
+                <span class="c1"># Now get update state information (triples &amp; timestamp)</span>
+                <span class="n">ep_key</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;endpoint_key&quot;</span><span class="p">]</span>
+                <span class="n">endpoints_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_provider</span><span class="o">.</span><span class="n">get_endpoints</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">ep_key</span> <span class="ow">in</span> <span class="n">endpoints_data</span><span class="p">:</span>
+                    <span class="n">ep</span> <span class="o">=</span> <span class="n">endpoints_data</span><span class="p">[</span><span class="n">ep_key</span><span class="p">]</span>
+                    <span class="c1"># Run update state query in executor to avoid blocking</span>
+                    <span class="n">update_state</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                        <span class="kc">None</span><span class="p">,</span> <span class="n">UpdateState</span><span class="o">.</span><span class="n">from_endpoint</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_provider</span><span class="p">,</span> <span class="n">ep</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">update_state</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">triples</span> <span class="ow">or</span> <span class="mi">0</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">timestamp</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_state</span><span class="o">.</span><span class="n">error</span> <span class="ow">or</span> <span class="s2">&quot;N/A&quot;</span>
+                        <span class="c1"># Optionally adjust status if update query failed</span>
+                        <span class="k">if</span> <span class="n">update_state</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span>
+                                <span class="s2">&quot;status&quot;</span>
+                            <span class="p">]</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (Update query: </span><span class="si">{</span><span class="n">update_state</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">)&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">error</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;Error </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#fee2e2&quot;</span>  <span class="c1"># light red</span>
+
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;latency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#fee2e2&quot;</span>
 
     <span class="c1"># Final update to show results</span>
@@ -1330,39 +1588,7 @@
 
             <details class="quote">
               <summary>Source code in <code>nscholia/dashboard.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
@@ -1411,7 +1637,62 @@
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">setup_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">setup_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render the dashboard</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1424,20 +1705,31 @@
 
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">endpoints_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Prefer checking the website URL over the SPARQL endpoint</span>
+        <span class="n">check_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;website&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_url</span><span class="p">:</span>
+            <span class="n">check_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;endpoint&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
         <span class="n">ep_url</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;endpoint&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
         <span class="n">ep_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
         <span class="n">ep_group</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;General&quot;</span><span class="p">)</span>
 
-        <span class="n">link_html</span> <span class="o">=</span> <span class="n">Link</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ep_url</span><span class="p">,</span> <span class="s2">&quot;Link&quot;</span><span class="p">)</span>
+        <span class="n">link_html</span> <span class="o">=</span> <span class="n">Link</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">check_url</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s2">&quot;website&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">ep_url</span><span class="p">,</span> <span class="s2">&quot;Link&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="n">ep_group</span><span class="p">,</span>
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ep_name</span><span class="p">,</span>
-                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">ep_url</span><span class="p">,</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">check_url</span><span class="p">,</span>  <span class="c1"># URL to check for availability</span>
+                <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="n">ep_url</span><span class="p">,</span>  <span class="c1"># Original SPARQL endpoint</span>
+                <span class="s2">&quot;endpoint_key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>  <span class="c1"># Store the key for later lookup</span>
                 <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">link_html</span><span class="p">,</span>
                 <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Pending&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;latency&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">&quot;triples&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
@@ -1455,43 +1747,55 @@
             <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;URL&quot;</span><span class="p">,</span>
             <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;link&quot;</span><span class="p">,</span>
             <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
-        <span class="p">},</span>  <span class="c1"># HTML rendered via html_columns</span>
-        <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">},</span>
         <span class="p">{</span>
             <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Latency (s)&quot;</span><span class="p">,</span>
             <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;latency&quot;</span><span class="p">,</span>
             <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numericColumn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;valueFormatter&quot;</span><span class="p">:</span> <span class="s2">&quot;params.value ? params.value.toFixed(3) : &#39;0.000&#39;&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Triples&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;triples&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numericColumn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;valueFormatter&quot;</span><span class="p">:</span> <span class="s2">&quot;params.value ? params.value.toLocaleString() : &#39;0&#39;&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;Last Update&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">]</span>
 
-    <span class="c1"># Define styles and behavior in the options dictionary</span>
     <span class="n">grid_options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;rowSelection&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
         <span class="s2">&quot;animateRows&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="c1"># This fixes the original error. We treat this as a standard AgGrid callback string.</span>
         <span class="s2">&quot;:getRowStyle&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;(params) =&gt; {</span>
 <span class="s2">            return { background: params.data.color };</span>
 <span class="s2">        }&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="c1"># Configure the ListOfDictsGrid</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">GridConfig</span><span class="p">(</span>
         <span class="n">column_defs</span><span class="o">=</span><span class="n">column_defs</span><span class="p">,</span>
-        <span class="n">key_col</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">,</span>  <span class="c1"># Use URL as the unique key</span>
-        <span class="n">options</span><span class="o">=</span><span class="n">grid_options</span><span class="p">,</span>  <span class="c1"># Pass the options mapping</span>
-        <span class="n">html_columns</span><span class="o">=</span><span class="p">[</span>
-            <span class="mi">2</span>
-        <span class="p">],</span>  <span class="c1"># Index of the &#39;link&#39; column (0-based index of visible cols)</span>
+        <span class="n">key_col</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">grid_options</span><span class="p">,</span>
+        <span class="n">html_columns</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
         <span class="n">auto_size_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;balham&quot;</span><span class="p">,</span>  <span class="c1"># Optional: &#39;ag-theme-balham&#39; or &#39;material&#39;</span>
+        <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;balham&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># Instantiate the grid wrapper</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">ListOfDictsGrid</span><span class="p">(</span><span class="n">lod</span><span class="o">=</span><span class="n">rows</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="c1"># Trigger one check initially (optional)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">timer</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_all</span><span class="p">,</span> <span class="n">once</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1528,6 +1832,9 @@
 
     <div class="doc doc-contents ">
 
+        <p>created 2025-12-17
+author wf</p>
+
 
 
 
@@ -1559,6 +1866,8 @@
     <div class="doc doc-contents ">
 
 
+        <p>endpoints access</p>
+
 
 
 
@@ -1567,25 +1876,123 @@
 
               <details class="quote">
                 <summary>Source code in <code>nscholia/endpoints.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Endpoints</span><span class="p">:</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Endpoints</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    endpoints access</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nqm</span> <span class="o">=</span> <span class="n">NamedQueryManager</span><span class="o">.</span><span class="n">from_samples</span><span class="p">()</span>
+        <span class="c1"># Initialize QueryManager with the specific YAML path for dashboard queries</span>
+        <span class="n">yaml_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+            <span class="o">/</span> <span class="s2">&quot;nscholia_examples&quot;</span>
+            <span class="o">/</span> <span class="s2">&quot;dashboard_queries.yaml&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query YAML file not found: </span><span class="si">{</span><span class="n">yaml_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qm</span> <span class="o">=</span> <span class="n">QueryManager</span><span class="p">(</span>
+            <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;sparql&quot;</span><span class="p">,</span> <span class="n">queriesPath</span><span class="o">=</span><span class="n">yaml_path</span><span class="p">,</span> <span class="n">with_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        list all endpoints</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">endpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nqm</span><span class="o">.</span><span class="n">endpoints</span>
         <span class="k">return</span> <span class="n">endpoints</span>
+
+    <span class="k">def</span> <span class="nf">runQuery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">Query</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run a SPARQL query and return results as list of dicts</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: Query object to execute</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of dictionaries containing query results, or None if error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="n">SPARQL</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">has_params</span><span class="p">:</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">apply_default_params</span><span class="p">()</span>
+        <span class="n">qlod</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">queryAsListOfDicts</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">params_dict</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">qlod</span>
+
+    <span class="k">def</span> <span class="nf">update_state_query_for_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Query</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the update state query for the given endpoint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">ep</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;blazegraph&quot;</span> <span class="ow">and</span> <span class="s2">&quot;wikidata&quot;</span> <span class="ow">in</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;WikidataUpdateState&quot;</span>
+        <span class="k">elif</span> <span class="n">ep</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;qlever&quot;</span><span class="p">:</span>
+            <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;QLeverUpdateState&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;TripleCount&quot;</span>
+        <span class="k">if</span> <span class="n">query_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">queriesByName</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">queriesByName</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">query_name</span><span class="p">)</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">ep</span><span class="o">.</span><span class="n">endpoint</span>
+        <span class="k">return</span> <span class="n">query</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1617,12 +2024,12 @@
 
             <details class="quote">
               <summary>Source code in <code>nscholia/endpoints.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    list all endpoints</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1633,6 +2040,288 @@
     </div>
 
 </div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="nscholia.endpoints.Endpoints.runQuery" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">runQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></code>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Run a SPARQL query and return results as list of dicts</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>query</code>
+            </td>
+            <td>
+                  <code><span title="snapquery.snapquery_core.Query">Query</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Query object to execute</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List of dictionaries containing query results, or None if error</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>nscholia/endpoints.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">runQuery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">Query</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a SPARQL query and return results as list of dicts</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        query: Query object to execute</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dictionaries containing query results, or None if error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint</span> <span class="o">=</span> <span class="n">SPARQL</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">has_params</span><span class="p">:</span>
+        <span class="n">query</span><span class="o">.</span><span class="n">apply_default_params</span><span class="p">()</span>
+    <span class="n">qlod</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">queryAsListOfDicts</span><span class="p">(</span>
+        <span class="n">query</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">params_dict</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">qlod</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="nscholia.endpoints.Endpoints.update_state_query_for_endpoint" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">update_state_query_for_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span></code>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>get the update state query for the given endpoint</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>nscholia/endpoints.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_state_query_for_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Query</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get the update state query for the given endpoint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">ep</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;blazegraph&quot;</span> <span class="ow">and</span> <span class="s2">&quot;wikidata&quot;</span> <span class="ow">in</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;WikidataUpdateState&quot;</span>
+    <span class="k">elif</span> <span class="n">ep</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;qlever&quot;</span><span class="p">:</span>
+        <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;QLeverUpdateState&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">query_name</span> <span class="o">=</span> <span class="s2">&quot;TripleCount&quot;</span>
+    <span class="k">if</span> <span class="n">query_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">queriesByName</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">queriesByName</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">query_name</span><span class="p">)</span>
+        <span class="n">query</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">ep</span><span class="o">.</span><span class="n">endpoint</span>
+    <span class="k">return</span> <span class="n">query</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="nscholia.endpoints.UpdateState" class="doc doc-heading">
+            <code>UpdateState</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>the update state of and endpoint</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>nscholia/endpoints.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">UpdateState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    the update state of and endpoint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">endpoint_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">triples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_endpoint</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">em</span><span class="p">:</span> <span class="n">Endpoints</span><span class="p">,</span> <span class="n">ep</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">):</span>
+        <span class="n">update_state</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">triples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">ep</span><span class="o">.</span><span class="n">data_seeded</span><span class="p">,</span> <span class="n">endpoint_name</span><span class="o">=</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="n">update_state_query_for_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+            <span class="n">qlod</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="n">runQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">qlod</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">qlod</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="n">update_state</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="n">qlod</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;tripleCount&quot;</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+                    <span class="n">update_state</span><span class="o">.</span><span class="n">triples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tripleCount&quot;</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;updates_complete_until&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+                        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+                            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+                        <span class="n">update_state</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span>
+                        <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">update_state</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;query failed&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">update_state</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">update_state</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
 
 
 
@@ -1727,17 +2416,57 @@
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Monitor</span><span class="p">:</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Monitor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks endpoint availability</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Default User-Agent to avoid being blocked by servers</span>
+    <span class="n">DEFAULT_USER_AGENT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;nscholia-monitor/1.0 (https://github.com/WolfgangFahl/nscholia)&quot;</span>
+    <span class="p">)</span>
+
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatusResult</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatusResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if an endpoint is available.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: URL to check</span>
+<span class="sd">            timeout: Request timeout in seconds</span>
+<span class="sd">            user_agent: Custom user agent string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">user_agent</span> <span class="o">=</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">DEFAULT_USER_AGENT</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">}</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-                <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
                 <span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
                 <span class="k">return</span> <span class="n">StatusResult</span><span class="p">(</span>
                     <span class="n">endpoint_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># Filled by caller</span>
@@ -1763,6 +2492,159 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="nscholia.monitor.Monitor.check" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">check</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Check if an endpoint is available.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>url</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>URL to check</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>timeout</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Request timeout in seconds</p>
+              </div>
+            </td>
+            <td>
+                  <code>5.0</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>user_agent</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Custom user agent string</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>nscholia/monitor.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatusResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an endpoint is available.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: URL to check</span>
+<span class="sd">        timeout: Request timeout in seconds</span>
+<span class="sd">        user_agent: Custom user agent string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">user_agent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">user_agent</span> <span class="o">=</span> <span class="n">Monitor</span><span class="o">.</span><span class="n">DEFAULT_USER_AGENT</span>
+
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">}</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="k">return</span> <span class="n">StatusResult</span><span class="p">(</span>
+                <span class="n">endpoint_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># Filled by caller</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                <span class="n">latency</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">TimeoutException</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StatusResult</span><span class="p">(</span><span class="n">endpoint_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s2">&quot;Timeout&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StatusResult</span><span class="p">(</span><span class="n">endpoint_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
@@ -1863,18 +2745,20 @@
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Version</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Version handling for nicescholia</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;nicescholia&quot;</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">nscholia</span><span class="o">.</span><span class="n">__version__</span>
     <span class="n">date</span> <span class="o">=</span> <span class="s2">&quot;2025-12-17&quot;</span>
     <span class="n">updated</span> <span class="o">=</span> <span class="s2">&quot;2025-12-17&quot;</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;nicegui based scholia&quot;</span>
     <span class="n">authors</span> <span class="o">=</span> <span class="s2">&quot;Wolfgang Fahl&quot;</span>
-    <span class="n">doc_url</span><span class="o">=</span><span class="s2">&quot;https://wiki.bitplan.com/index.php/nicescholia&quot;</span>
+    <span class="n">doc_url</span> <span class="o">=</span> <span class="s2">&quot;https://wiki.bitplan.com/index.php/nicescholia&quot;</span>
     <span class="n">chat_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/WolfgangFahl/nicescholia/discussions&quot;</span>
     <span class="n">cm_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/WolfgangFahl/nicescholia&quot;</span>
     <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Copyright 2025 contributors. All rights reserved.</span>
