@@ -63,12 +63,12 @@ class Endpoints:
         get the update state query for the given endpoint
         """
         query = None
-        if ep.database == "blazegraph" and "wikidata" in ep.name.lower():
-            query_name = "WikidataUpdateState"
-        elif ep.database == "qlever":
-            query_name = "QLeverUpdateState"
-        else:
-            query_name = "TripleCount"
+        query_name = "TripleCount"
+        if "wikidata" in ep.name.lower():
+            if ep.database == "blazegraph":
+                query_name = "WikidataUpdateState"
+            elif ep.database == "qlever":
+                query_name = "QLeverUpdateState"
         if query_name in self.qm.queriesByName:
             query = self.qm.queriesByName.get(query_name)
             query.endpoint = ep.endpoint

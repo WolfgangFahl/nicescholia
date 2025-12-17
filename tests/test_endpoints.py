@@ -5,13 +5,13 @@ Created on 17.12.2025
 """
 
 import os
-import traceback
 from pathlib import Path
+import traceback
 
 from basemkit.basetest import Basetest
-from lodstorage.query import QueryManager
-
+from lodstorage.query import QueryManager, Endpoint
 from nscholia.endpoints import Endpoints, UpdateState
+
 from tests.action_stats import ActionStats
 
 
@@ -33,6 +33,20 @@ class TestUpdateState(Basetest):
         self.qm = QueryManager(
             lang="sparql", queriesPath=yaml_path, with_default=False, debug=self.debug
         )
+
+    def testDblp(self):
+        """
+        testDBLP endpoint
+        """
+        endpoint=Endpoint()
+        endpoint.endpoint="https://sparql.dblp.org/sparql"
+        endpoint.url="https://sparql.dblp.org/sparql"
+        endpoint.database="qlever"
+        update_state = UpdateState.from_endpoint(self.em, endpoint)
+        debug=self.debug
+        debug=True
+        if debug:
+            print(update_state)
 
     def testTriplesAndUpdate(self):
         """
