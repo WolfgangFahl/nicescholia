@@ -40,7 +40,7 @@ classifiers=[
 
 dynamic = ["version"]
 [tool.hatch.version]
-path = "snapquery/__init__.py"
+path = "nscholia/__init__.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
