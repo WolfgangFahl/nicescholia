@@ -8,13 +8,14 @@ class Version:
     """
     Version handling for nicescholia
     """
+
     name = "nicescholia"
     version = nscholia.__version__
     date = "2025-12-17"
     updated = "2025-12-17"
     description = "nicegui based scholia"
     authors = "Wolfgang Fahl"
-    doc_url="https://wiki.bitplan.com/index.php/nicescholia"
+    doc_url = "https://wiki.bitplan.com/index.php/nicescholia"
     chat_url = "https://github.com/WolfgangFahl/nicescholia/discussions"
     cm_url = "https://github.com/WolfgangFahl/nicescholia"
     license = """Copyright 2025 contributors. All rights reserved.

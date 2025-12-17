@@ -28,10 +28,14 @@ class Monitor:
     """
 
     # Default User-Agent to avoid being blocked by servers
-    DEFAULT_USER_AGENT = "nscholia-monitor/1.0 (https://github.com/WolfgangFahl/nscholia)"
+    DEFAULT_USER_AGENT = (
+        "nscholia-monitor/1.0 (https://github.com/WolfgangFahl/nscholia)"
+    )
 
     @staticmethod
-    async def check(url: str, timeout: float = 5.0, user_agent: str = None) -> StatusResult:
+    async def check(
+        url: str, timeout: float = 5.0, user_agent: str = None
+    ) -> StatusResult:
         """
         Check if an endpoint is available.
 

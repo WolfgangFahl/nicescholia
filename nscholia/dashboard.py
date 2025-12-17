@@ -1,4 +1,5 @@
 import asyncio
+
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.widgets import Link
 from nicegui import ui
@@ -71,7 +72,9 @@ class Dashboard:
                             row["timestamp"] = update_state.error or "N/A"
                             # Optionally adjust status if update query failed
                             if update_state.error:
-                                row["status"] += f" (Update query: {update_state.error})"
+                                row[
+                                    "status"
+                                ] += f" (Update query: {update_state.error})"
                 else:
                     row["status"] = result.error or f"Error {result.status_code}"
                     row["latency"] = 0
@@ -112,7 +115,9 @@ class Dashboard:
             ep_name = getattr(ep, "name", key)
             ep_group = getattr(ep, "group", "General")
 
-            link_html = Link.create(check_url if hasattr(ep, "website") else ep_url, "Link")
+            link_html = Link.create(
+                check_url if hasattr(ep, "website") else ep_url, "Link"
+            )
 
             rows.append(
                 {

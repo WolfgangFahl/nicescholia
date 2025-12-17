@@ -2,13 +2,14 @@
 created 2025-12-17
 author wf
 """
+
+import os
 from dataclasses import dataclass
 from datetime import datetime
-import os
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 
-from lodstorage.query import QueryManager, Endpoint
+from lodstorage.query import Endpoint, QueryManager
 from lodstorage.sparql import SPARQL
 from snapquery.snapquery_core import NamedQueryManager, Query
 
@@ -17,16 +18,20 @@ class Endpoints:
     """
     endpoints access
     """
+
     def __init__(self):
         self.nqm = NamedQueryManager.from_samples()
         # Initialize QueryManager with the specific YAML path for dashboard queries
-        yaml_path = Path(__file__).parent.parent / "nscholia_examples" / "dashboard_queries.yaml"
+        yaml_path = (
+            Path(__file__).parent.parent
+            / "nscholia_examples"
+            / "dashboard_queries.yaml"
+        )
         if not os.path.exists(yaml_path):
             raise FileNotFoundError(f"Query YAML file not found: {yaml_path}")
         self.qm = QueryManager(
             lang="sparql", queriesPath=yaml_path, with_default=False, debug=False
         )
-
 
     def get_endpoints(self) -> Dict[str, Any]:
         """
@@ -53,20 +58,20 @@ class Endpoints:
         )
         return qlod
 
-    def update_state_query_for_endpoint(self,ep:Endpoint)->Query:
+    def update_state_query_for_endpoint(self, ep: Endpoint) -> Query:
         """
         get the update state query for the given endpoint
         """
-        query=None
-        if ep.database == 'blazegraph' and 'wikidata' in ep.name.lower():
-            query_name = 'WikidataUpdateState'
-        elif ep.database == 'qlever':
-            query_name = 'QLeverUpdateState'
+        query = None
+        if ep.database == "blazegraph" and "wikidata" in ep.name.lower():
+            query_name = "WikidataUpdateState"
+        elif ep.database == "qlever":
+            query_name = "QLeverUpdateState"
         else:
-            query_name = 'TripleCount'
+            query_name = "TripleCount"
         if query_name in self.qm.queriesByName:
-            query=self.qm.queriesByName.get(query_name)
-            query.endpoint=ep.endpoint
+            query = self.qm.queriesByName.get(query_name)
+            query.endpoint = ep.endpoint
         return query
 
 
@@ -75,25 +80,25 @@ class UpdateState:
     """
     the update state of and endpoint
     """
+
     endpoint_name: str
     triples: Optional[int] = None
     timestamp: Optional[str] = None
     success: bool = False
     error: Optional[str] = None
 
-
     @classmethod
-    def from_endpoint(cls,em:Endpoints,ep:Endpoint):
-        update_state=cls(triples=0, timestamp=ep.data_seeded, endpoint_name=ep.name)
+    def from_endpoint(cls, em: Endpoints, ep: Endpoint):
+        update_state = cls(triples=0, timestamp=ep.data_seeded, endpoint_name=ep.name)
         try:
             query = em.update_state_query_for_endpoint(ep)
             qlod = em.runQuery(query)
             success = qlod and len(qlod) > 0
             if success:
-                update_state.success=True
-                record=qlod[0]
+                update_state.success = True
+                record = qlod[0]
                 if "tripleCount" in record:
-                    update_state.triples=int(record.get("tripleCount"))
+                    update_state.triples = int(record.get("tripleCount"))
                 for var_name in ["timestamp", "updates_complete_until"]:
                     if var_name in record:
                         timestamp = record.get(var_name)
@@ -102,9 +107,7 @@ class UpdateState:
                         update_state.timestamp = timestamp
                         break
             else:
-                update_state.error="query failed"
+                update_state.error = "query failed"
         except Exception as ex:
-            update_state.error=str(ex)
+            update_state.error = str(ex)
         return update_state
-
-
