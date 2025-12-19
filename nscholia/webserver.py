@@ -4,13 +4,20 @@ Webserver definition
 
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution, WebserverConfig
 from nicegui import Client, ui
-from nscholia.version import Version
 
 from nscholia.endpoint_dashboard import EndpointDashboard
-from nscholia.examples_dashboard_gemini import ExampleDashboard as ExampleDashboardGemini
-from nscholia.examples_dashboard_chatgpt import ExampleDashboard as ExampleDashboardChatGPT
+from nscholia.examples_dashboard_chatgpt import (
+    ExampleDashboard as ExampleDashboardChatGPT,
+)
+from nscholia.examples_dashboard_claude import (
+    ExampleDashboard as ExampleDashboardClaude,
+)
+from nscholia.examples_dashboard_gemini import (
+    ExampleDashboard as ExampleDashboardGemini,
+)
 from nscholia.examples_dashboard_grok4 import ExampleDashboard as ExampleDashboardGrok4
-from nscholia.examples_dashboard_claude import ExampleDashboard as ExampleDashboardClaude
+from nscholia.google_sheet import GoogleSheet
+from nscholia.version import Version
 
 
 class ScholiaWebserver(InputWebserver):
@@ -33,6 +40,7 @@ class ScholiaWebserver(InputWebserver):
 
     def __init__(self):
         super().__init__(config=ScholiaWebserver.get_config())
+        self.sheet_lod = None
 
         @ui.page("/examples")
         async def examples(client: Client):
@@ -45,6 +53,14 @@ class ScholiaWebserver(InputWebserver):
         super().configure_run()
         self.sheet_id = self.args.sheet_id
         self.sheet_gid = self.args.sheet_gid
+        # Preload sheet on server startup for better performance
+        try:
+            self.sheet = GoogleSheet(sheet_id=self.sheet_id, gid=self.sheet_gid)
+            self.sheet.as_lod()
+            print(f"Preloaded Google Sheet: {len(self.sheet.lod)} rows")
+        except Exception as ex:
+            # Non-fatal: UI can still load/reload on demand
+            print(f"Sheet preload failed: {ex}")
 
 
 class ScholiaSolution(InputWebSolution):
@@ -68,17 +84,18 @@ class ScholiaSolution(InputWebSolution):
             self.link_button("Endpoints", "/", "hub")
             self.link_button("Examples", "/examples", "table_view")
             # Example of external link
-            #self.link_button(
+            # self.link_button(
             #    "GitHub",
             #    "https://github.com/WolfgangFahl/nicescholia",
             #    "code",
             #    new_tab=True,
-            #)
+            # )
 
     async def examples(self):
         """
         Examples page using Google Sheet with selector for different dashboards
         """
+
         async def show():
             # Define the dashboard options
             dashboard_options = {
@@ -94,7 +111,9 @@ class ScholiaSolution(InputWebSolution):
                 selector = ui.select(
                     list(dashboard_options.keys()),
                     value=list(dashboard_options.keys())[0],  # Default to first
-                    on_change=lambda e: self.update_dashboard(e.value, dashboard_options)
+                    on_change=lambda e: self.update_dashboard(
+                        e.value, dashboard_options
+                    ),
                 ).classes("w-32")
 
             # Container for the dashboard
@@ -119,11 +138,7 @@ class ScholiaSolution(InputWebSolution):
 
         with self.dashboard_container:
             self.dashboard_container.clear()
-            self.selected_dashboard = dashboard_cls(
-                self,
-                sheet_id=self.webserver.sheet_id,
-                gid=self.webserver.sheet_gid
-            )
+            self.selected_dashboard = dashboard_cls(self, sheet=self.webserver.sheet)
             self.selected_dashboard.setup_ui()
 
     async def home(self):

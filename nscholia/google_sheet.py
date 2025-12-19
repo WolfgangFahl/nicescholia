@@ -1,9 +1,11 @@
-'''
+"""
 Created on 19.12.2025
 
 @author: wf
-'''
+"""
+
 import pandas as pd
+
 
 class GoogleSheet:
     """
@@ -21,7 +23,9 @@ class GoogleSheet:
         self.base_url = "https://docs.google.com/spreadsheets"
         self.sheet_id = sheet_id
         self.gid = gid
-        self.export_url = f"{self.base_url}/d/{self.sheet_id}/export?format=csv&gid={self.gid}"
+        self.lod = None
+        self.sheet_url = f"{self.base_url}/d/{self.sheet_id}"
+        self.export_url = f"{self.sheet_url}/export?format=csv&gid={self.gid}"
 
     def as_lod(self) -> list[dict]:
         """
@@ -31,6 +35,5 @@ class GoogleSheet:
             list[dict]: The rows from the sheet as a list of dictionaries.
         """
         df = pd.read_csv(self.export_url)
-        lod = df.to_dict('records')
-        return lod
-
+        self.lod = df.to_dict("records")
+        return self.lod

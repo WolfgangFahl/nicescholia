@@ -1,17 +1,18 @@
-'''
+"""
 Created on 2025-12-19
 
 @author: wf
-'''
+"""
+
 import asyncio
-from nicegui import ui
+
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.widgets import Link
+from nicegui import ui
 
 from nscholia.dashboard import Dashboard
 from nscholia.endpoints import Endpoints, UpdateState
 from nscholia.monitor import Monitor
-
 
 
 class EndpointDashboard(Dashboard):
@@ -40,7 +41,7 @@ class EndpointDashboard(Dashboard):
         for row in rows:
             # Visual update for checking state
             row["status"] = "Checking..."
-            row["color"] = self.COLORS['checking']
+            row["color"] = self.COLORS["checking"]
             row["triples"] = 0
             row["timestamp"] = ""
 
@@ -67,33 +68,42 @@ class EndpointDashboard(Dashboard):
                         ep = endpoints_data[ep_key]
                         try:
                             # Run update state query in executor to avoid blocking
-                            update_state = await asyncio.get_event_loop().run_in_executor(
-                                None, UpdateState.from_endpoint, self.endpoints_provider, ep
+                            update_state = (
+                                await asyncio.get_event_loop().run_in_executor(
+                                    None,
+                                    UpdateState.from_endpoint,
+                                    self.endpoints_provider,
+                                    ep,
+                                )
                             )
 
                             if update_state.success:
                                 # SUCCESS: Endpoint online AND update query succeeded
                                 row["triples"] = update_state.triples or 0
                                 row["timestamp"] = update_state.timestamp or ""
-                                row["color"] = self.COLORS['success']
+                                row["color"] = self.COLORS["success"]
                                 update_success = True
                             else:
                                 # WARNING: Endpoint online BUT update query failed
                                 row["triples"] = 0
                                 row["timestamp"] = update_state.error or "N/A"
-                                row["status"] = f"Online ({result.status_code}) ⚠️ {update_state.error or 'Update query failed'}"
-                                row["color"] = self.COLORS['warning']
+                                row["status"] = (
+                                    f"Online ({result.status_code}) ⚠️ {update_state.error or 'Update query failed'}"
+                                )
+                                row["color"] = self.COLORS["warning"]
 
                         except Exception as update_ex:
                             # WARNING: Endpoint online BUT update query threw exception
                             row["triples"] = 0
                             row["timestamp"] = str(update_ex)
-                            row["status"] = f"Online ({result.status_code}) ⚠️ Update error: {str(update_ex)}"
-                            row["color"] = self.COLORS['warning']
+                            row["status"] = (
+                                f"Online ({result.status_code}) ⚠️ Update error: {str(update_ex)}"
+                            )
+                            row["color"] = self.COLORS["warning"]
 
                     # If no update state check was attempted or key not found
-                    if not update_success and row["color"] == self.COLORS['checking']:
-                        row["color"] = self.COLORS['warning']
+                    if not update_success and row["color"] == self.COLORS["checking"]:
+                        row["color"] = self.COLORS["warning"]
                         row["status"] += " (No update data)"
 
                 else:
@@ -102,7 +112,7 @@ class EndpointDashboard(Dashboard):
                     row["latency"] = 0
                     row["triples"] = 0
                     row["timestamp"] = ""
-                    row["color"] = self.COLORS['error']
+                    row["color"] = self.COLORS["error"]
 
             except Exception as ex:
                 # ERROR: Exception during availability check
@@ -110,7 +120,7 @@ class EndpointDashboard(Dashboard):
                 row["latency"] = 0
                 row["triples"] = 0
                 row["timestamp"] = ""
-                row["color"] = self.COLORS['error']
+                row["color"] = self.COLORS["error"]
 
         # Final update to show results
         self.grid.update()

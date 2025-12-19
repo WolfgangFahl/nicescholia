@@ -1,12 +1,13 @@
-'''
+"""
 Created on 2025-12-19
 
 @author: wf
-'''
+"""
+
 import pandas as pd
-from nicegui import ui
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.widgets import Link
+from nicegui import ui
 
 from nscholia.dashboard import Dashboard
 from nscholia.google_sheet import GoogleSheet
@@ -19,13 +20,16 @@ class ExampleDashboard(Dashboard):
     """
 
     # Extend COLORS with a default/pending state
-    COLORS = {**Dashboard.COLORS, 'pending': '#ffffff'}  # White for initial pending state
+    COLORS = {
+        **Dashboard.COLORS,
+        "pending": "#ffffff",
+    }  # White for initial pending state
 
     def __init__(self, solution, sheet_id: str, gid: int):
         super().__init__(solution)
         self.sheet_id = sheet_id
         self.sheet = GoogleSheet(sheet_id=self.sheet_id, gid=gid)
-        self.sheet_rows=None
+        self.sheet_rows = None
 
     async def check_all(self):
         """
@@ -44,7 +48,7 @@ class ExampleDashboard(Dashboard):
                 continue
 
             row["live_status"] = "Checking..."
-            row["color"] = self.COLORS['checking']
+            row["color"] = self.COLORS["checking"]
             self.grid.update()
 
             try:
@@ -54,15 +58,15 @@ class ExampleDashboard(Dashboard):
                 if result.is_online:
                     row["latency"] = result.latency
                     row["live_status"] = f"OK ({result.status_code})"
-                    row["color"] = self.COLORS['success']
+                    row["color"] = self.COLORS["success"]
                 else:
                     row["latency"] = 0
                     row["live_status"] = result.error or f"Error {result.status_code}"
-                    row["color"] = self.COLORS['error']
+                    row["color"] = self.COLORS["error"]
 
             except Exception as ex:
                 row["live_status"] = f"Ex: {str(ex)}"
-                row["color"] = self.COLORS['error']
+                row["color"] = self.COLORS["error"]
 
         self.grid.update()
         ui.notify("Example checks complete.")
@@ -74,15 +78,17 @@ class ExampleDashboard(Dashboard):
         except Exception as ex:
             self.solution.handle_exception(ex)
 
-
     def setup_ui(self):
         """
         Setup grid with Google Sheet data
         """
         with ui.row().classes("w-full items-center mb-4"):
             ui.button("Refresh", icon="refresh", on_click=self.check_all)
-            ui.link("Source Sheet", f"https://docs.google.com/spreadsheets/d/{self.sheet_id}", new_tab=True).classes("text-sm text-blue-500")
-
+            ui.link(
+                "Source Sheet",
+                f"https://docs.google.com/spreadsheets/d/{self.sheet_id}",
+                new_tab=True,
+            ).classes("text-sm text-blue-500")
 
         # Transform data for grid
         rows = []
@@ -93,7 +99,11 @@ class ExampleDashboard(Dashboard):
             link_url = item.get("link")
 
             # Simple validation - only process if we have a valid link string
-            if pd.isna(link_url) or not isinstance(link_url, str) or not link_url.startswith("http"):
+            if (
+                pd.isna(link_url)
+                or not isinstance(link_url, str)
+                or not link_url.startswith("http")
+            ):
                 continue
 
             # Create clickable link
@@ -137,36 +147,73 @@ class ExampleDashboard(Dashboard):
             if pd.isna(github3):
                 github3 = ""
 
-            rows.append({
-                "raw_link": link_url,
-                "link_col": link_html,
-                "comment": comment,
-                "sheet_status": str(orig_status),
-                "pr": pr,
-                "error1": error1,
-                "github1": github1,
-                "error2": error2,
-                "github2": github2,
-                "error3": error3,
-                "github3": github3,
-                "live_status": "Pending",
-                "latency": 0.0,
-                "color": self.COLORS['pending']
-            })
+            rows.append(
+                {
+                    "raw_link": link_url,
+                    "link_col": link_html,
+                    "comment": comment,
+                    "sheet_status": str(orig_status),
+                    "pr": pr,
+                    "error1": error1,
+                    "github1": github1,
+                    "error2": error2,
+                    "github2": github2,
+                    "error3": error3,
+                    "github3": github3,
+                    "live_status": "Pending",
+                    "latency": 0.0,
+                    "color": self.COLORS["pending"],
+                }
+            )
 
         column_defs = [
             {"headerName": "Link", "field": "link_col", "width": 70},
-            {"headerName": "Comment", "field": "comment", "flex": 2, "wrapText": True, "autoHeight": True},
-            {"headerName": "Sheet Status", "field": "sheet_status", "width": 100, "tooltipField": "sheet_status"},
+            {
+                "headerName": "Comment",
+                "field": "comment",
+                "flex": 2,
+                "wrapText": True,
+                "autoHeight": True,
+            },
+            {
+                "headerName": "Sheet Status",
+                "field": "sheet_status",
+                "width": 100,
+                "tooltipField": "sheet_status",
+            },
             {"headerName": "PR", "field": "pr", "width": 100},
-            {"headerName": "Error 1", "field": "error1", "flex": 1, "wrapText": True, "autoHeight": True},
+            {
+                "headerName": "Error 1",
+                "field": "error1",
+                "flex": 1,
+                "wrapText": True,
+                "autoHeight": True,
+            },
             {"headerName": "GitHub 1", "field": "github1", "width": 150},
-            {"headerName": "Error 2", "field": "error2", "flex": 1, "wrapText": True, "autoHeight": True},
+            {
+                "headerName": "Error 2",
+                "field": "error2",
+                "flex": 1,
+                "wrapText": True,
+                "autoHeight": True,
+            },
             {"headerName": "GitHub 2", "field": "github2", "width": 150},
-            {"headerName": "Error 3", "field": "error3", "flex": 1, "wrapText": True, "autoHeight": True},
+            {
+                "headerName": "Error 3",
+                "field": "error3",
+                "flex": 1,
+                "wrapText": True,
+                "autoHeight": True,
+            },
             {"headerName": "GitHub 3", "field": "github3", "width": 150},
             {"headerName": "Live Check", "field": "live_status", "width": 150},
-            {"headerName": "Latency (s)", "field": "latency", "width": 100, "type": "numericColumn", "valueFormatter": "params.value ? params.value.toFixed(3) : ''"},
+            {
+                "headerName": "Latency (s)",
+                "field": "latency",
+                "width": 100,
+                "type": "numericColumn",
+                "valueFormatter": "params.value ? params.value.toFixed(3) : ''",
+            },
         ]
 
         grid_options = {

@@ -1,11 +1,14 @@
-'''
+"""
 Created on 2025-12-19
 
 @author: wf
-'''
+"""
+
 import pandas as pd
 from basemkit.basetest import Basetest
+
 from nscholia.google_sheet import GoogleSheet
+
 
 class TestExamples(Basetest):
     """
@@ -15,7 +18,9 @@ class TestExamples(Basetest):
 
     def setUp(self, debug=True, profile=True):
         Basetest.setUp(self, debug=debug, profile=profile)
-        self.sheet=GoogleSheet(sheet_id="1cbEY7P9U-1xtvEgeAiizjJiOkpuihRFdc03JL239Ixg")
+        self.sheet = GoogleSheet(
+            sheet_id="1cbEY7P9U-1xtvEgeAiizjJiOkpuihRFdc03JL239Ixg"
+        )
 
     def testScholiaExamples(self):
         """
@@ -34,10 +39,11 @@ class TestExamples(Basetest):
 
         # Filter valid scholia links
         scholia_links = [
-            ex for ex in examples
-            if 'link' in ex
-            and pd.notna(ex['link'])
-            and 'qlever.scholia.wiki' in str(ex['link'])
+            ex
+            for ex in examples
+            if "link" in ex
+            and pd.notna(ex["link"])
+            and "qlever.scholia.wiki" in str(ex["link"])
         ]
 
         if self.debug:
