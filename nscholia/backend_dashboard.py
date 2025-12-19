@@ -81,6 +81,21 @@ class BackendDashboard(Dashboard):
             if self.solution:
                 self.solution.handle_exception(e)
 
+    def _get_sparql_link_html(self, backend_obj) -> str:
+        """
+        Helper function to generate the HTML link for the SPARQL edit URL.
+        Reduces code duplication between render_grid and check_single_row.
+        """
+        sparql_val = getattr(backend_obj, "sparql_editurl", None)
+
+        if sparql_val and str(sparql_val).startswith("http"):
+            return Link.create(sparql_val, "Query")
+
+        if sparql_val:
+            return sparql_val
+
+        return "-"
+
     def render_grid(self):
         """Transform backend objects to LOD and render AG Grid."""
         self.grid_container.clear()
@@ -89,16 +104,9 @@ class BackendDashboard(Dashboard):
         if self.backends_config and self.backends_config.backends:
             for key, backend in self.backends_config.backends.items():
 
-                link_html = Link.create(backend.url, "Visit")
-
-                sparql_val = backend.sparql_endpoint
-                sparql_html = "-"
-                if sparql_val and sparql_val.startswith("http"):
-                    sparql_html = Link.create(sparql_val, "Query")
-                elif sparql_val:
-                    sparql_html = sparql_val
-
                 url_html = Link.create(backend.url, backend.url)
+                link_html = Link.create(backend.url, "Visit")
+                sparql_html = self._get_sparql_link_html(backend)
 
                 rows.append({
                     "key": key,
@@ -198,12 +206,7 @@ class BackendDashboard(Dashboard):
                 row["status_msg"] = "OK"
                 row["color"] = self.COLORS["success"]
                 row["version"] = backend_obj.version or "?"
-
-                s_val = backend_obj.sparql_endpoint
-                if s_val and s_val.startswith("http"):
-                    row["sparql_link"] = Link.create(s_val, "Query")
-                else:
-                    row["sparql_link"] = s_val or "-"
+                row["sparql_link"] = self._get_sparql_link_html(backend_obj)
 
             else:
                 row["status_msg"] = "Unreachable / No JSON"
