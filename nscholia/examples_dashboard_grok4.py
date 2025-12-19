@@ -25,11 +25,9 @@ class ExampleDashboard(Dashboard):
         "pending": "#ffffff",
     }  # White for initial pending state
 
-    def __init__(self, solution, sheet_id: str, gid: int):
+    def __init__(self, solution, sheet:GoogleSheet):
         super().__init__(solution)
-        self.sheet_id = sheet_id
-        self.sheet = GoogleSheet(sheet_id=self.sheet_id, gid=gid)
-        self.sheet_rows = None
+        self.sheet=sheet
 
     async def check_all(self):
         """

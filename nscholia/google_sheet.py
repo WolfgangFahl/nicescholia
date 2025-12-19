@@ -31,9 +31,16 @@ class GoogleSheet:
         """
         Fetch the sheet data as a list of dictionaries (LOD).
 
+        replaces NaNs with empty strings to avoid "NaN horror" in downstream usage.
+
         Returns:
             list[dict]: The rows from the sheet as a list of dictionaries.
         """
         df = pd.read_csv(self.export_url)
+
+        # Fix NaN horror: replace all NaN/None values with empty strings
+        # This prevents float('nan') from crashing UI logic or showing up as text-NaN
+        df = df.fillna("")
+
         self.lod = df.to_dict("records")
         return self.lod
