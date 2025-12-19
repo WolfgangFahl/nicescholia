@@ -16,7 +16,23 @@ class ScholiaCmd(WebserverCmd):
     """
 
     def getArgParser(self, description: str, version_msg) -> ArgumentParser:
+        """
+        get the argument parser
+        """
         parser = super().getArgParser(description, version_msg)
+        parser.add_argument(
+            "--sheet-id",
+            dest="sheet_id",
+            default="1cbEY7P9U-1xtvEgeAiizjJiOkpuihRFdc03JL239Ixg",
+            help="Google Sheet ID for Scholia examples (CSV export will be used)",
+        )
+        parser.add_argument(
+            "--sheet-gid",
+            dest="sheet_gid",
+            type=int,
+            default=0,
+            help="Google Sheet GID (tab id), default: 0",
+        )
         return parser
 
 

@@ -1,0 +1,36 @@
+'''
+Created on 19.12.2025
+
+@author: wf
+'''
+import pandas as pd
+
+class GoogleSheet:
+    """
+    A simple adapter for reading data from a Google Sheet.
+    """
+
+    def __init__(self, sheet_id: str, gid: int = 0):
+        """
+        Initialize the GoogleSheet with the given sheet ID and optional GID.
+
+        Args:
+            sheet_id (str): The ID of the Google Sheet.
+            gid (int): The sheet tab ID (default is 0).
+        """
+        self.base_url = "https://docs.google.com/spreadsheets"
+        self.sheet_id = sheet_id
+        self.gid = gid
+        self.export_url = f"{self.base_url}/d/{self.sheet_id}/export?format=csv&gid={self.gid}"
+
+    def as_lod(self) -> list[dict]:
+        """
+        Fetch the sheet data as a list of dictionaries (LOD).
+
+        Returns:
+            list[dict]: The rows from the sheet as a list of dictionaries.
+        """
+        df = pd.read_csv(self.export_url)
+        lod = df.to_dict('records')
+        return lod
+
