@@ -25,6 +25,7 @@ class ExampleDashboard(Dashboard):
         super().__init__(solution)
         self.sheet_id = sheet_id
         self.sheet = GoogleSheet(sheet_id=self.sheet_id, gid=gid)
+        self.sheet_rows=None
 
     async def check_all(self):
         """
@@ -66,6 +67,14 @@ class ExampleDashboard(Dashboard):
         self.grid.update()
         ui.notify("Example checks complete.")
 
+    def load_sheet(self):
+        # Load data
+        try:
+            self.sheet_rows = self.sheet.as_lod()
+        except Exception as ex:
+            self.solution.handle_exception(ex)
+
+
     def setup_ui(self):
         """
         Setup grid with Google Sheet data
@@ -74,16 +83,13 @@ class ExampleDashboard(Dashboard):
             ui.button("Refresh", icon="refresh", on_click=self.check_all)
             ui.link("Source Sheet", f"https://docs.google.com/spreadsheets/d/{self.sheet_id}", new_tab=True).classes("text-sm text-blue-500")
 
-        # Load data
-        try:
-            raw_data = self.sheet.as_lod()
-        except Exception as e:
-            ui.label(f"Error loading sheet: {str(e)}").classes("text-red-500")
-            return
 
         # Transform data for grid
         rows = []
-        for item in raw_data:
+        if not self.sheet_rows:
+            ui.notify("sheet data not loaded ")
+            return
+        for item in self.sheet_rows:
             link_url = item.get("link")
 
             # Simple validation - only process if we have a valid link string

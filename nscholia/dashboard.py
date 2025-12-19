@@ -1,6 +1,8 @@
+"""
+generic Dashboard
+"""
 
-
-
+from nicegui import ui
 class Dashboard:
     """
     UI for monitoring a list of item using ListOfDictsGrid.
@@ -17,7 +19,15 @@ class Dashboard:
     def __init__(self, solution):
         self.solution = solution
         self.webserver = solution.webserver
+        self.legend_row=None
         self.grid = None  # Will hold the ListOfDictsGrid instance
+
+    def setup_legend(self):
+        # Add legend
+        with ui.row().classes("ml-auto gap-4") as self.legend_row:
+            ui.label("🟢 Success").classes("text-sm")
+            ui.label("🟡 Warning").classes("text-sm")
+            ui.label("🔴 Error").classes("text-sm")
 
     def setup_ui(self):
         """

@@ -123,12 +123,7 @@ class EndpointDashboard(Dashboard):
         with ui.row().classes("w-full items-center mb-4"):
             ui.label("Endpoint Monitor").classes("text-2xl font-bold")
             ui.button("Refresh", icon="refresh", on_click=self.check_all)
-
-            # Add legend
-            with ui.row().classes("ml-auto gap-4"):
-                ui.label("🟢 Success").classes("text-sm")
-                ui.label("🟡 Warning").classes("text-sm")
-                ui.label("🔴 Error").classes("text-sm")
+            self.setup_legend()
 
         # 1. Fetch data
         endpoints_data = self.endpoints_provider.get_endpoints()

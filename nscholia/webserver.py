@@ -65,15 +65,15 @@ class ScholiaSolution(InputWebSolution):
 
         # Add custom links
         with self.header:
-            self.link_button("Endpoints", "/", "endpoint dashboard")
-            self.link_button("Examples", "/examples", "examples dashboard")
+            self.link_button("Endpoints", "/", "hub")
+            self.link_button("Examples", "/examples", "table_view")
             # Example of external link
-            self.link_button(
-                "GitHub",
-                "https://github.com/WolfgangFahl/nicescholia",
-                "code",
-                new_tab=True,
-            )
+            #self.link_button(
+            #    "GitHub",
+            #    "https://github.com/WolfgangFahl/nicescholia",
+            #    "code",
+            #    new_tab=True,
+            #)
 
     async def examples(self):
         """
