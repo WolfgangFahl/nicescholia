@@ -1,7 +1,9 @@
 """
-Created on 19.12.2025
+Created on 2025-12-19
 
 @author: wf
+WF 2025-12-18 using Gemini Pro, Grok4, ChatGPT5 and Claude 4.5
+see our more elaborate pyGenericSpreadSheet
 """
 
 import pandas as pd
