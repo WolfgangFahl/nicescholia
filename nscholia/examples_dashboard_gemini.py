@@ -10,7 +10,6 @@ from nscholia.monitor import Monitor, StatusResult
 
 from nscholia.google_sheet import GoogleSheet
 
-
 class ExampleDashboard(Dashboard):
     """
     Dashboard for monitoring Scholia Examples from a Google Sheet.
@@ -95,7 +94,7 @@ class ExampleDashboard(Dashboard):
             if not link_url or not link_url.startswith("http"):
                 continue
 
-            link_html = Link.create(link_url, link_url)
+            link_html = Link.create(link_url, "View")
 
             rows.append(
                 {
@@ -117,6 +116,14 @@ class ExampleDashboard(Dashboard):
 
         column_defs = [
             {"headerName": "Link", "field": "link_col", "width": 70},
+            {
+                "headerName": "Url",
+                "field": "raw_link",
+                "width": 300,
+                "cellStyle": {"textOverflow": "ellipsis", "overflow": "hidden", "whiteSpace": "nowrap"},
+                "tooltipField": "raw_link"  # Show full URL on hover
+            },
+
             {
                 "headerName": "Comment",
                 "field": "comment",
