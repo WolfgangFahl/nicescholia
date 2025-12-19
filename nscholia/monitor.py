@@ -3,8 +3,8 @@ Availability monitoring logic
 WF 2025-12-18 using Gemini Pro, Grok4, ChatGPT5 and Claude 4.5
 """
 
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
 from typing import Optional
 
 import httpx
@@ -22,8 +22,9 @@ class StatusResult:
     @property
     def is_online(self) -> bool:
         # 2xx success, 3xx redirects (common for shortlinks) are considered OK
-        online= 200 <= self.status_code < 400
+        online = 200 <= self.status_code < 400
         return online
+
 
 class Monitor:
     """
@@ -57,15 +58,15 @@ class Monitor:
             async with httpx.AsyncClient(follow_redirects=True) as client:
                 response = await client.get(url, headers=headers, timeout=timeout)
                 duration = time.time() - start_time
-                status_result=StatusResult(
+                status_result = StatusResult(
                     endpoint_name="",  # Filled by caller
                     url=url,
                     status_code=response.status_code,
                     latency=round(duration, 3),
-                    response=response
+                    response=response,
                 )
         except httpx.TimeoutException:
-            status_result= StatusResult(endpoint_name="", url=url, error="Timeout")
+            status_result = StatusResult(endpoint_name="", url=url, error="Timeout")
         except Exception as e:
-            status_result= StatusResult(endpoint_name="", url=url, error=str(e))
+            status_result = StatusResult(endpoint_name="", url=url, error=str(e))
         return status_result

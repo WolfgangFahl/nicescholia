@@ -3,14 +3,15 @@ Created on 2025-12-19
 
 @author: wf
 """
+
 import asyncio
 import socket
 
+import pandas as pd
 from basemkit.basetest import Basetest
-from nscholia.monitor import Monitor
 
 from nscholia.google_sheet import GoogleSheet
-import pandas as pd
+from nscholia.monitor import Monitor
 
 
 class TestExamples(Basetest):
@@ -41,9 +42,9 @@ class TestExamples(Basetest):
         """
         Test the monitor on a specific problematic URLs to diagnose status code 0 errors.
         """
-        base_url="https://qlever.scholia.wiki"
-        for postfix in ["","/author"]:
-            url=f"{base_url}{postfix}"
+        base_url = "https://qlever.scholia.wiki"
+        for postfix in ["", "/author"]:
+            url = f"{base_url}{postfix}"
             # Monitor.check is async, so we need an event loop to run it in a test
             result = asyncio.run(Monitor.check(url, timeout=5.0))
 
@@ -53,7 +54,6 @@ class TestExamples(Basetest):
                 print(f"Status Code: {result.status_code}")
                 print(f"Latency: {result.latency:.4f}s")
                 print(f"Error: {result.error}")
-
 
     def testScholiaExamples(self):
         """

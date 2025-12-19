@@ -1,0 +1,11 @@
+# Scholia mirror network backends
+# see https://github.com/WolfgangFahl/nicescholia/issues/7
+backends:
+    'toolforge.org':
+        url: "https://scholia.toolforge.org/"
+    'adfreiburg-Qlever':
+        url: "https://qlever.scholia.wiki"
+    'RWTH-WDQS':
+        url: "https://scholia.wikidata.dbis.rwth-aachen.de/"
+    'RWTH-Qlever':
+        url: "https://scholia-qlever.wikidata.dbis.rwth-aachen.de/"

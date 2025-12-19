@@ -1,14 +1,23 @@
+"""
+Examples Dashboard
+
+WF 2025-12-18 using Gemini Pro, Grok4, ChatGPT5 and Claude 4.5 - GeminiPro clearly>
+winning the contest
+
+"""
+
 import asyncio
 from typing import Dict
 
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.progress import NiceguiProgressbar
 from ngwidgets.widgets import Link
-from nicegui import ui, run
+from nicegui import run, ui
+
 from nscholia.dashboard import Dashboard
+from nscholia.google_sheet import GoogleSheet
 from nscholia.monitor import Monitor, StatusResult
 
-from nscholia.google_sheet import GoogleSheet
 
 class ExampleDashboard(Dashboard):
     """
@@ -33,7 +42,9 @@ class ExampleDashboard(Dashboard):
             ui.label("Scholia Examples").classes("text-2xl font-bold")
 
             with ui.row().classes("gap-2"):
-                ui.button("Reload Sheet", icon="refresh", on_click=self.reload_sheet).props("outline")
+                ui.button(
+                    "Reload Sheet", icon="refresh", on_click=self.reload_sheet
+                ).props("outline")
                 ui.button("Check Links", icon="network_check", on_click=self.check_all)
 
                 ui.link(
@@ -45,10 +56,13 @@ class ExampleDashboard(Dashboard):
             self.setup_legend()
         with ui.row().classes("items-center gap-3 mb-2"):
             ui.icon("timer")
-            timeout_slider = ui.slider(min=1, max=60, step=0.5, value=self.timeout_seconds).classes("w-64")
-            ui.label().bind_text_from(timeout_slider, "value", lambda v: f"Timeout: {float(v):.1f} s")
+            timeout_slider = ui.slider(
+                min=1, max=60, step=0.5, value=self.timeout_seconds
+            ).classes("w-64")
+            ui.label().bind_text_from(
+                timeout_slider, "value", lambda v: f"Timeout: {float(v):.1f} s"
+            )
             timeout_slider.bind_value(self, "timeout_seconds")
-
 
         self.progress_bar = NiceguiProgressbar(total=100, desc="Status", unit="%")
         self.progress_bar.progress.visible = False
@@ -89,7 +103,7 @@ class ExampleDashboard(Dashboard):
 
         for item in data_source:
             # Simple string check now works because fillna("") guaranteed strings
-            link_url = item.get("link", "") # Default to empty string if column missing
+            link_url = item.get("link", "")  # Default to empty string if column missing
 
             if not link_url or not link_url.startswith("http"):
                 continue
@@ -100,14 +114,12 @@ class ExampleDashboard(Dashboard):
                 {
                     "raw_link": link_url,
                     "link_col": link_html,
-
                     # Direct .get() is now safe. No more get_val helper.
                     "comment": item.get("comment", ""),
-                    "sheet_status": item.get("status", "-"), # Default to "-" if empty
+                    "sheet_status": item.get("status", "-"),  # Default to "-" if empty
                     "pr": item.get("PR", ""),
                     "github1": item.get("GitHub ticket 1", ""),
                     "error1": item.get("error message 1", ""),
-
                     "live_status": "Pending",
                     "latency": 0.0,
                     "color": self.COLORS["pending"],
@@ -120,10 +132,13 @@ class ExampleDashboard(Dashboard):
                 "headerName": "Url",
                 "field": "raw_link",
                 "width": 300,
-                "cellStyle": {"textOverflow": "ellipsis", "overflow": "hidden", "whiteSpace": "nowrap"},
-                "tooltipField": "raw_link"  # Show full URL on hover
+                "cellStyle": {
+                    "textOverflow": "ellipsis",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap",
+                },
+                "tooltipField": "raw_link",  # Show full URL on hover
             },
-
             {
                 "headerName": "Comment",
                 "field": "comment",
@@ -192,7 +207,9 @@ class ExampleDashboard(Dashboard):
         self.progress_bar.progress.visible = False
         ui.notify("Link checking complete")
 
-    def set_result(self,row:Dict[str,str],result:StatusResult,ex:Exception=None):
+    def set_result(
+        self, row: Dict[str, str], result: StatusResult, ex: Exception = None
+    ):
         if ex is not None:
             row["live_status"] = "Exception"
             row["latency"] = 0
@@ -216,7 +233,7 @@ class ExampleDashboard(Dashboard):
             return
         try:
             row["live_status"] = "Checking..."
-            result = await Monitor.check(url,timeout=self.timeout_seconds)
+            result = await Monitor.check(url, timeout=self.timeout_seconds)
             self.set_result(row, result)
         except Exception as ex:
-            self.set_result(None,ex)
+            self.set_result(None, ex)

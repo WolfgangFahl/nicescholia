@@ -4,20 +4,12 @@ Webserver definition
 
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution, WebserverConfig
 from nicegui import Client, ui
-
-from nscholia.endpoint_dashboard import EndpointDashboard
-from nscholia.examples_dashboard_chatgpt import (
-    ExampleDashboard as ExampleDashboardChatGPT,
-)
-from nscholia.examples_dashboard_claude import (
-    ExampleDashboard as ExampleDashboardClaude,
-)
-from nscholia.examples_dashboard_gemini import (
-    ExampleDashboard as ExampleDashboardGemini,
-)
-from nscholia.examples_dashboard_grok4 import ExampleDashboard as ExampleDashboardGrok4
-from nscholia.google_sheet import GoogleSheet
 from nscholia.version import Version
+
+from nscholia.backend_dashboard import BackendDashboard
+from nscholia.endpoint_dashboard import EndpointDashboard
+from nscholia.examples_dashboard import ExampleDashboard
+from nscholia.google_sheet import GoogleSheet
 
 
 class ScholiaWebserver(InputWebserver):
@@ -45,6 +37,11 @@ class ScholiaWebserver(InputWebserver):
         @ui.page("/examples")
         async def examples(client: Client):
             return await self.page(client, ScholiaSolution.examples)
+
+        @ui.page("/backends")
+        async def backends(client: Client):
+            return await self.page(client, ScholiaSolution.backends)
+
 
     def configure_run(self):
         """
@@ -83,6 +80,7 @@ class ScholiaSolution(InputWebSolution):
         with self.header:
             self.link_button("Endpoints", "/", "hub")
             self.link_button("Examples", "/examples", "table_view")
+            self.link_button("Backends", "/backends", "dns")
             # Example of external link
             # self.link_button(
             #    "GitHub",
@@ -97,49 +95,23 @@ class ScholiaSolution(InputWebSolution):
         """
 
         async def show():
-            # Define the dashboard options
-            dashboard_options = {
-                "Gemini": ExampleDashboardGemini,
-                "ChatGPT": ExampleDashboardChatGPT,
-                "Grok4": ExampleDashboardGrok4,
-                "Claude": ExampleDashboardClaude,
-            }
-
-            # UI for selector
-            with ui.row().classes("w-full items-center mb-4"):
-                ui.label("Select Dashboard:").classes("mr-2")
-                selector = ui.select(
-                    list(dashboard_options.keys()),
-                    value=list(dashboard_options.keys())[0],  # Default to first
-                    on_change=lambda e: self.update_dashboard(
-                        e.value, dashboard_options
-                    ),
-                ).classes("w-32")
-
-            # Container for the dashboard
-            self.dashboard_container = ui.element("div").classes("w-full")
-
-            # Initial load
-            await self.update_dashboard(selector.value, dashboard_options)
+            self.dashboard = ExampleDashboard(self, sheet=self.webserver.sheet)
+            self.dashboard.setup_ui()
 
         await self.setup_content_div(show)
 
-    async def update_dashboard(self, selected: str, options: dict):
+    async def backends(self):
         """
-        Update the displayed dashboard based on selection
+        Backends status page
         """
-        if self.selected_dashboard:
-            self.selected_dashboard = None  # Clear previous
 
-        dashboard_cls = options.get(selected)
-        if not dashboard_cls:
-            ui.notify(f"Invalid selection: {selected}", type="error")
-            return
+        async def show():
+            # No path arg needed here, it uses the class default from Backends
+            self.dashboard = BackendDashboard(self)
+            self.dashboard.setup_ui()
 
-        with self.dashboard_container:
-            self.dashboard_container.clear()
-            self.selected_dashboard = dashboard_cls(self, sheet=self.webserver.sheet)
-            self.selected_dashboard.setup_ui()
+        await self.setup_content_div(show)
+
 
     async def home(self):
         """
