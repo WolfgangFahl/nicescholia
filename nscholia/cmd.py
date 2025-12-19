@@ -33,6 +33,7 @@ class ScholiaCmd(WebserverCmd):
             default=0,
             help="Google Sheet GID (tab id), default: 0",
         )
+
         return parser
 
 

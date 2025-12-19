@@ -33,6 +33,7 @@ class ExampleDashboard(Dashboard):
         self.sheet = sheet
         self.grid = None
         self.timeout_seconds = 5.0
+        self.selected_backend_name = "qlever-scholia"  # Default
 
         self.COLORS.update({"pending": "#ffffff", "checking": "#f0f0f0"})
 
@@ -40,6 +41,15 @@ class ExampleDashboard(Dashboard):
         """Setup the Dashboard UI elements."""
         with ui.row().classes("w-full items-center mb-4"):
             ui.label("Scholia Examples").classes("text-2xl font-bold")
+
+            # Retrieve backend names. Assuming self.webserver.backends is a Backends object
+            # with a 'backends' dictionary attribute.
+            backend_names = list(self.webserver.backends.backends.keys()) if self.webserver.backends else []
+
+            self.backend_select = ui.select(
+                options=backend_names,
+                label="Backend"
+            ).classes("w-48").bind_value(self, "selected_backend_name")
 
             with ui.row().classes("gap-2"):
                 ui.button(
@@ -231,7 +241,18 @@ class ExampleDashboard(Dashboard):
         url = row.get("raw_link")
         if not url:
             return
+
+        # Perform URL replacement if not default backend
+        default_url_base = "https://qlever.scholia.wiki"
+
         try:
+            # Check for backend swap logic
+            if self.selected_backend_name and self.webserver.backends:
+                target_backend = self.webserver.backends.backends.get(self.selected_backend_name)
+                # If we found the backend config and the url matches the default, swap it
+                if target_backend and url.startswith(default_url_base):
+                    url = url.replace(default_url_base, target_backend.url)
+
             row["live_status"] = "Checking..."
             result = await Monitor.check(url, timeout=self.timeout_seconds)
             self.set_result(row, result)

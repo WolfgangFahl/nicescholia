@@ -6,6 +6,7 @@ from ngwidgets.input_webserver import InputWebserver, InputWebSolution, Webserve
 from nicegui import Client, ui
 from nscholia.version import Version
 
+from nscholia.backend import Backends
 from nscholia.backend_dashboard import BackendDashboard
 from nscholia.endpoint_dashboard import EndpointDashboard
 from nscholia.examples_dashboard import ExampleDashboard
@@ -32,7 +33,8 @@ class ScholiaWebserver(InputWebserver):
 
     def __init__(self):
         super().__init__(config=ScholiaWebserver.get_config())
-        self.sheet_lod = None
+        self.sheet = None
+        self.backends = None
 
         @ui.page("/examples")
         async def examples(client: Client):
@@ -58,6 +60,11 @@ class ScholiaWebserver(InputWebserver):
         except Exception as ex:
             # Non-fatal: UI can still load/reload on demand
             print(f"Sheet preload failed: {ex}")
+        # Preload backends on server startup
+        try:
+            self.backends=Backends.from_yaml_path()
+        except Exception as ex:
+            print(f"Backends preload failed: {ex}")
 
 
 class ScholiaSolution(InputWebSolution):

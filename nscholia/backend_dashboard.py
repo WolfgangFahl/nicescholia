@@ -22,7 +22,6 @@ class BackendDashboard(Dashboard):
     def __init__(self, solution, yaml_path: str = None):
         super().__init__(solution)
         self.webserver = solution.webserver
-        # Default to None so Backends uses its internal default path
         self.yaml_path = yaml_path
         self.backends_config = None
         self.progress_bar = None
@@ -30,11 +29,10 @@ class BackendDashboard(Dashboard):
         self.grid = None
         self.timeout_seconds = 2.0
 
-        # extend colors if needed
         self.COLORS.update({
             "pending": "#ffffff",
             "checking": "#f0f0f0",
-            "offline": "#ffcccc" # Light red for connect failures
+            "offline": "#ffcccc"
         })
 
     def setup_ui(self):
@@ -65,23 +63,16 @@ class BackendDashboard(Dashboard):
 
         self.grid_container = ui.column().classes("w-full h-full")
 
-        # Trigger load in background
         ui.timer(0.1, self.reload_config, once=True)
 
     async def reload_config(self):
         """Reload data from the YAML file."""
-        self.progress_bar.progress.visible = True
-        self.progress_bar.set_description("Loading YAML Config...")
-        self.progress_bar.update(0)
-
         try:
-            # CORRECTED: Use the class method provided in your snippet
-            # IO bound loading of YAML
             self.backends_config = await run.io_bound(Backends.from_yaml_path, self.yaml_path)
 
             self.render_grid()
             if self.backends_config and self.backends_config.backends:
-                ui.notify(f"Successfully loaded {len(self.backends_config.backends)} backends")
+                ui.notify(f"Loaded {len(self.backends_config.backends)} backends")
             else:
                 ui.notify("Loaded empty configuration", type="warning")
 
@@ -89,29 +80,34 @@ class BackendDashboard(Dashboard):
             ui.notify(f"Error loading backends: {str(e)}", type="negative")
             if self.solution:
                 self.solution.handle_exception(e)
-        finally:
-            self.progress_bar.progress.visible = False
 
     def render_grid(self):
         """Transform backend objects to LOD and render AG Grid."""
         self.grid_container.clear()
 
         rows = []
-        # The lod_storable structure usually results in a dict for backends
         if self.backends_config and self.backends_config.backends:
             for key, backend in self.backends_config.backends.items():
+
                 link_html = Link.create(backend.url, "Visit")
+
+                sparql_val = backend.sparql_endpoint
+                sparql_html = "-"
+                if sparql_val and sparql_val.startswith("http"):
+                    sparql_html = Link.create(sparql_val, "Query")
+                elif sparql_val:
+                    sparql_html = sparql_val
+
+                url_html = Link.create(backend.url, backend.url)
 
                 rows.append({
                     "key": key,
-                    "url": backend.url, # raw url for logic
+                    "url_html": url_html,
                     "link_col": link_html,
                     "version": backend.version or "-",
-                    "sparql": backend.sparql_endpoint or "-",
+                    "sparql_link": sparql_html,
                     "status_msg": "Pending",
                     "color": self.COLORS["pending"],
-                    # Hidden reference to the actual backend object for updates
-                    "_backend_obj": backend
                 })
 
         column_defs = [
@@ -121,14 +117,13 @@ class BackendDashboard(Dashboard):
             {"headerName": "Version", "field": "version", "width": 200},
             {
                 "headerName": "SPARQL Endpoint",
-                "field": "sparql",
-                "width": 300,
-                "tooltipField": "sparql"
+                "field": "sparql_link",
+                "width": 100
             },
             {
                 "headerName": "Base URL",
-                "field": "url",
-                "width": 250,
+                "field": "url_html",
+                "width": 300,
                 "cellStyle": {
                     "textOverflow": "ellipsis",
                     "overflow": "hidden",
@@ -147,7 +142,7 @@ class BackendDashboard(Dashboard):
             column_defs=column_defs,
             key_col="key",
             options=grid_options,
-            html_columns=[1], # link_col
+            html_columns=[1, 4, 5],
             auto_size_columns=True,
             theme="balham",
         )
@@ -169,13 +164,11 @@ class BackendDashboard(Dashboard):
         self.progress_bar.progress.visible = True
         self.progress_bar.set_description(f"Checking {total} backends...")
 
-        # Reset visual status
         for row in rows:
             row["status_msg"] = "Queued..."
             row["color"] = self.COLORS["checking"]
         self.grid.update()
 
-        # Process in batches to avoid choking the IO
         batch_size = 5
         for i in range(0, total, batch_size):
             batch_rows = rows[i : i + batch_size]
@@ -188,25 +181,30 @@ class BackendDashboard(Dashboard):
         ui.notify("Backend check complete")
 
     async def check_single_row(self, row: dict):
-        """
-        Check a single backend row.
-        """
-        backend_obj = row.get("_backend_obj")
+        """Check a single backend row."""
+        key = row.get("key")
+        backend_obj = self.backends_config.backends.get(key)
+
         if not backend_obj:
+            row["status_msg"] = "Config Missing"
+            row["color"] = self.COLORS["error"]
             return
 
         try:
             row["status_msg"] = "Checking..."
-
-            # Run the synchronous fetch_config call in a thread
             success = await run.io_bound(backend_obj.fetch_config, self.timeout_seconds)
 
             if success:
                 row["status_msg"] = "OK"
                 row["color"] = self.COLORS["success"]
-                # Update cols with data fetched into the object
                 row["version"] = backend_obj.version or "?"
-                row["sparql"] = backend_obj.sparql_endpoint or "?"
+
+                s_val = backend_obj.sparql_endpoint
+                if s_val and s_val.startswith("http"):
+                    row["sparql_link"] = Link.create(s_val, "Query")
+                else:
+                    row["sparql_link"] = s_val or "-"
+
             else:
                 row["status_msg"] = "Unreachable / No JSON"
                 row["color"] = self.COLORS["offline"]
