@@ -1,11 +1,12 @@
 import asyncio
+from typing import Dict
 
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
 from ngwidgets.progress import NiceguiProgressbar
 from ngwidgets.widgets import Link
 from nicegui import ui, run
 from nscholia.dashboard import Dashboard
-from nscholia.monitor import Monitor
+from nscholia.monitor import Monitor, StatusResult
 
 from nscholia.google_sheet import GoogleSheet
 
@@ -23,6 +24,7 @@ class ExampleDashboard(Dashboard):
         self.grid_container = None
         self.sheet = sheet
         self.grid = None
+        self.timeout_seconds = 5.0
 
         self.COLORS.update({"pending": "#ffffff", "checking": "#f0f0f0"})
 
@@ -42,6 +44,12 @@ class ExampleDashboard(Dashboard):
                 ).classes("text-sm text-blue-500 self-center ml-2")
 
             self.setup_legend()
+        with ui.row().classes("items-center gap-3 mb-2"):
+            ui.icon("timer")
+            timeout_slider = ui.slider(min=1, max=60, step=0.5, value=self.timeout_seconds).classes("w-64")
+            ui.label().bind_text_from(timeout_slider, "value", lambda v: f"Timeout: {float(v):.1f} s")
+            timeout_slider.bind_value(self, "timeout_seconds")
+
 
         self.progress_bar = NiceguiProgressbar(total=100, desc="Status", unit="%")
         self.progress_bar.progress.visible = False
@@ -87,7 +95,7 @@ class ExampleDashboard(Dashboard):
             if not link_url or not link_url.startswith("http"):
                 continue
 
-            link_html = Link.create(link_url, "View")
+            link_html = Link.create(link_url, link_url)
 
             rows.append(
                 {
@@ -177,26 +185,31 @@ class ExampleDashboard(Dashboard):
         self.progress_bar.progress.visible = False
         ui.notify("Link checking complete")
 
-    async def check_single_row(self, row: dict):
-        url = row.get("raw_link")
-        if not url:
-            return
-
-        try:
-            row["live_status"] = "Checking..."
-            result = await Monitor.check(url)
-
-            if result.is_online:
-                row["latency"] = result.latency
-                row["live_status"] = f"OK ({result.status_code})"
-                row["color"] = self.COLORS["success"]
-            else:
-                row["latency"] = 0
-                error_info = result.error or f"Http {result.status_code}"
-                row["live_status"] = error_info
-                row["color"] = self.COLORS["error"]
-
-        except Exception:
+    def set_result(self,row:Dict[str,str],result:StatusResult,ex:Exception=None):
+        if ex is not None:
             row["live_status"] = "Exception"
             row["latency"] = 0
             row["color"] = self.COLORS["error"]
+        elif result.is_online:
+            row["latency"] = result.latency
+            row["live_status"] = f"OK ({result.status_code})"
+            row["color"] = self.COLORS["success"]
+        else:
+            row["latency"] = 0
+            error_info = result.error or f"Http {result.status_code}"
+            row["live_status"] = error_info
+            row["color"] = self.COLORS["error"]
+
+    async def check_single_row(self, row: dict):
+        """
+        check a single row
+        """
+        url = row.get("raw_link")
+        if not url:
+            return
+        try:
+            row["live_status"] = "Checking..."
+            result = await Monitor.check(url,timeout=self.timeout_seconds)
+            self.set_result(row, result)
+        except Exception as ex:
+            self.set_result(None,ex)

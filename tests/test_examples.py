@@ -3,7 +3,7 @@ Created on 2025-12-19
 
 @author: wf
 """
-
+import socket
 import pandas as pd
 from basemkit.basetest import Basetest
 
@@ -21,6 +21,17 @@ class TestExamples(Basetest):
         self.sheet = GoogleSheet(
             sheet_id="1cbEY7P9U-1xtvEgeAiizjJiOkpuihRFdc03JL239Ixg"
         )
+
+    def test_dns(self):
+        """
+        """
+        hostname = "qlever.scholia.wiki"
+
+        try:
+            # Try getting address info
+            print("DNS Info:", socket.getaddrinfo(hostname, 443))
+        except socket.gaierror as e:
+            print(f"DNS Resolution Failed: {e}")
 
     def testScholiaExamples(self):
         """
