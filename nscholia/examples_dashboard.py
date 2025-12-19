@@ -25,6 +25,8 @@ class ExampleDashboard(Dashboard):
     Includes background loading, progress tracking, and separate reload capabilities.
     """
 
+    DEFAULT_URL_BASE = "https://qlever.scholia.wiki"
+
     def __init__(self, solution, sheet: GoogleSheet):
         super().__init__(solution)
         self.webserver = solution.webserver
@@ -33,7 +35,7 @@ class ExampleDashboard(Dashboard):
         self.sheet = sheet
         self.grid = None
         self.timeout_seconds = 5.0
-        self.selected_backend_name = "qlever-scholia"  # Default
+        self.selected_backend_name = "qlever-scholia"
 
         self.COLORS.update({"pending": "#ffffff", "checking": "#f0f0f0"})
 
@@ -42,14 +44,12 @@ class ExampleDashboard(Dashboard):
         with ui.row().classes("w-full items-center mb-4"):
             ui.label("Scholia Examples").classes("text-2xl font-bold")
 
-            # Retrieve backend names. Assuming self.webserver.backends is a Backends object
-            # with a 'backends' dictionary attribute.
             backend_names = list(self.webserver.backends.backends.keys()) if self.webserver.backends else []
 
             self.backend_select = ui.select(
                 options=backend_names,
                 label="Backend"
-            ).classes("w-48").bind_value(self, "selected_backend_name")
+            ).classes("w-48").bind_value(self, "selected_backend_name").on_value_change(lambda: self.render_grid())
 
             with ui.row().classes("gap-2"):
                 ui.button(
@@ -82,6 +82,21 @@ class ExampleDashboard(Dashboard):
         # Trigger load in background
         ui.timer(0.1, self.reload_sheet, once=True)
 
+    def get_target_url(self, original_url: str) -> str:
+        """Transforms the original URL based on the selected backend."""
+        if not original_url:
+            return ""
+
+        if not self.selected_backend_name or not self.webserver.backends:
+            return original_url
+
+        target_backend = self.webserver.backends.backends.get(self.selected_backend_name)
+
+        if target_backend and original_url.startswith(self.DEFAULT_URL_BASE):
+            return original_url.replace(self.DEFAULT_URL_BASE, target_backend.url)
+
+        return original_url
+
     async def reload_sheet(self):
         """Reload data from the Google Sheet in the background."""
         self.progress_bar.progress.visible = True
@@ -112,21 +127,21 @@ class ExampleDashboard(Dashboard):
         data_source = self.sheet.lod if self.sheet.lod else []
 
         for item in data_source:
-            # Simple string check now works because fillna("") guaranteed strings
-            link_url = item.get("link", "")  # Default to empty string if column missing
+            sheet_url = item.get("link", "")
 
-            if not link_url or not link_url.startswith("http"):
+            if not sheet_url or not sheet_url.startswith("http"):
                 continue
 
-            link_html = Link.create(link_url, "View")
+            effective_url = self.get_target_url(sheet_url)
+            link_html = Link.create(effective_url, "View")
 
             rows.append(
                 {
-                    "raw_link": link_url,
+                    "raw_link": effective_url,
+                    "original_link": sheet_url,
                     "link_col": link_html,
-                    # Direct .get() is now safe. No more get_val helper.
                     "comment": item.get("comment", ""),
-                    "sheet_status": item.get("status", "-"),  # Default to "-" if empty
+                    "sheet_status": item.get("status", "-"),
                     "pr": item.get("PR", ""),
                     "github1": item.get("GitHub ticket 1", ""),
                     "error1": item.get("error message 1", ""),
@@ -147,7 +162,7 @@ class ExampleDashboard(Dashboard):
                     "overflow": "hidden",
                     "whiteSpace": "nowrap",
                 },
-                "tooltipField": "raw_link",  # Show full URL on hover
+                "tooltipField": "raw_link",
             },
             {
                 "headerName": "Comment",
@@ -171,7 +186,6 @@ class ExampleDashboard(Dashboard):
         grid_options = {
             "rowSelection": "single",
             "animateRows": True,
-            # Kept the colon fix from before
             ":getRowStyle": """function(params) { return { background: params.data.color }; }""",
         }
 
@@ -235,26 +249,14 @@ class ExampleDashboard(Dashboard):
             row["color"] = self.COLORS["error"]
 
     async def check_single_row(self, row: dict):
-        """
-        check a single row
-        """
+        """Check a single row"""
         url = row.get("raw_link")
         if not url:
             return
 
-        # Perform URL replacement if not default backend
-        default_url_base = "https://qlever.scholia.wiki"
-
+        row["live_status"] = "Checking..."
         try:
-            # Check for backend swap logic
-            if self.selected_backend_name and self.webserver.backends:
-                target_backend = self.webserver.backends.backends.get(self.selected_backend_name)
-                # If we found the backend config and the url matches the default, swap it
-                if target_backend and url.startswith(default_url_base):
-                    url = url.replace(default_url_base, target_backend.url)
-
-            row["live_status"] = "Checking..."
             result = await Monitor.check(url, timeout=self.timeout_seconds)
             self.set_result(row, result)
         except Exception as ex:
-            self.set_result(None, ex)
+            self.set_result(row, None, ex)
