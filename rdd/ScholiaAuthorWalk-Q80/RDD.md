@@ -17,7 +17,7 @@ First [Reel Driven Development](https://cr.bitplan.com/index.php/Reel_Driven_Dev
 
 - General RDD introduction: [discussion #11](https://github.com/WolfgangFahl/nicescholia/discussions/11)
 - This reel walked hop by hop with screenshots and findings: [discussion #12](https://github.com/WolfgangFahl/nicescholia/discussions/12)
-- Findings feed three trackers:
-  1. **scholia** → [WDscholia/scholia](https://github.com/WDscholia/scholia/issues) (F3 Use aspect empty, F4 legacy load)
-  2. **snapquery** → [WolfgangFahl/snapquery](https://github.com/WolfgangFahl/snapquery/issues) (F1 error format, F2 prefix merger)
-  3. **nicescholia** → [issues](https://github.com/WolfgangFahl/nicescholia/issues) (#8/#9/#10 dashboard & API surfaces)
+- Findings → actionable issues in three trackers:
+  1. **scholia**: F3 Use aspect empty → existing [WDscholia/scholia#1591](https://github.com/WDscholia/scholia/issues/1591) (Use-aspect curation, missing-data), related [#2780](https://github.com/WDscholia/scholia/issues/2780) (no-results class on QLever); F4 legacy load = the announced WDQS graph-split migration, related [#2769](https://github.com/WDscholia/scholia/issues/2769) — no new issues filed to avoid duplicates
+  2. **snapquery**: F1 error format → [WolfgangFahl/snapquery#79](https://github.com/WolfgangFahl/snapquery/issues/79); F2 prefix merger → [WolfgangFahl/snapquery#80](https://github.com/WolfgangFahl/snapquery/issues/80)
+  3. **nicescholia**: the author aspect should now have a POC → [#13](https://github.com/WolfgangFahl/nicescholia/issues/13) (milestone 0.1.0); dashboard & API surfaces: [#8](https://github.com/WolfgangFahl/nicescholia/issues/8), [#9](https://github.com/WolfgangFahl/nicescholia/issues/9), [#10](https://github.com/WolfgangFahl/nicescholia/issues/10)
