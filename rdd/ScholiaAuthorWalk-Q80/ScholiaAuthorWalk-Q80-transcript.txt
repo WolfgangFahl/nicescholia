@@ -1,0 +1,22 @@
+# ScholiaAuthorWalk-Q80 transcript
+# Provenance: the source video has NO audio track (microphone forgotten).
+# This is an AI-inferred narration reconstructed from a 1-frame/10s sweep
+# (reverse RDD) — hypothesis, not spoken words.
+
+[00:00] This is the legacy Scholia on Toolforge — note the banner: the WDQS graph split and the sunsetting of the legacy service, with the QLever mirror as the way forward.
+[00:20] Let us walk an author aspect — searching for Tim.
+[00:30] Tim Berners-Lee, Q80 — the author profile with ORCID, related researchers and the aspect table of contents.
+[00:40] The list of publications — fourteen works, from the early web RFCs to the Linked Data papers.
+[00:50] The topics-works matrix renders — but the Use aspect yields no results: one of the gaps to fix.
+[01:00] Publications per year — the aspect queries do run on the legacy backend, slowly.
+[01:10] Now snapquery — our named parameterized queries middleware: over a thousand queries across eight domains.
+[01:20] Filtered to the scholia.toolforge.org domain: 373 named queries — the author aspects among them.
+[01:30] The list queries — every Scholia list aspect exists as a named query here.
+[01:40] author_list-of-publications with parameter q equals Q80 against the wikidata endpoint.
+[01:50] The run fails: Unrecognized error format — the error handling itself is the first finding.
+[02:10] In the settings: debug with trace, default endpoint wikidata-qlever, and a simple prefix merger.
+[02:30] Switching the endpoint for the very same named query.
+[02:40] On wikidata-qlever-dbis it fails differently: Prefix wdt was not registered — the prefix merger did not inject the declarations. Second finding.
+[03:20] And this is nicescholia — the endpoint monitor: legacy wikidata unresolvable, triply timing out, the QLever family online.
+[03:30] The examples dashboard — 148 curated Scholia examples with their pull-request states.
+[03:50] And the backends dashboard — the four Scholia mirrors where the Q80 walk should eventually run natively.
