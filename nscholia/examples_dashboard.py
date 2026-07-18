@@ -44,12 +44,18 @@ class ExampleDashboard(Dashboard):
         with ui.row().classes("w-full items-center mb-4"):
             ui.label("Scholia Examples").classes("text-2xl font-bold")
 
-            backend_names = list(self.webserver.backends.backends.keys()) if self.webserver.backends else []
+            backend_names = (
+                list(self.webserver.backends.backends.keys())
+                if self.webserver.backends
+                else []
+            )
 
-            self.backend_select = ui.select(
-                options=backend_names,
-                label="Backend"
-            ).classes("w-48").bind_value(self, "selected_backend_name").on_value_change(lambda: self.render_grid())
+            self.backend_select = (
+                ui.select(options=backend_names, label="Backend")
+                .classes("w-48")
+                .bind_value(self, "selected_backend_name")
+                .on_value_change(lambda: self.render_grid())
+            )
 
             with ui.row().classes("gap-2"):
                 ui.button(
@@ -90,7 +96,9 @@ class ExampleDashboard(Dashboard):
         if not self.selected_backend_name or not self.webserver.backends:
             return original_url
 
-        target_backend = self.webserver.backends.backends.get(self.selected_backend_name)
+        target_backend = self.webserver.backends.backends.get(
+            self.selected_backend_name
+        )
 
         if target_backend and original_url.startswith(self.DEFAULT_URL_BASE):
             return original_url.replace(self.DEFAULT_URL_BASE, target_backend.url)

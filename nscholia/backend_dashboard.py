@@ -3,6 +3,7 @@ Created on 2025-12-19
 
 @author: wf
 """
+
 import asyncio
 
 from ngwidgets.lod_grid import GridConfig, ListOfDictsGrid
@@ -29,11 +30,9 @@ class BackendDashboard(Dashboard):
         self.grid = None
         self.timeout_seconds = 2.0
 
-        self.COLORS.update({
-            "pending": "#ffffff",
-            "checking": "#f0f0f0",
-            "offline": "#ffcccc"
-        })
+        self.COLORS.update(
+            {"pending": "#ffffff", "checking": "#f0f0f0", "offline": "#ffcccc"}
+        )
 
     def setup_ui(self):
         """Setup the Dashboard UI elements."""
@@ -68,7 +67,9 @@ class BackendDashboard(Dashboard):
     async def reload_config(self):
         """Reload data from the YAML file."""
         try:
-            self.backends_config = await run.io_bound(Backends.from_yaml_path, self.yaml_path)
+            self.backends_config = await run.io_bound(
+                Backends.from_yaml_path, self.yaml_path
+            )
 
             self.render_grid()
             if self.backends_config and self.backends_config.backends:
@@ -108,26 +109,24 @@ class BackendDashboard(Dashboard):
                 link_html = Link.create(backend.url, "Visit")
                 sparql_html = self._get_sparql_link_html(backend)
 
-                rows.append({
-                    "key": key,
-                    "url_html": url_html,
-                    "link_col": link_html,
-                    "version": backend.version or "-",
-                    "sparql_link": sparql_html,
-                    "status_msg": "Pending",
-                    "color": self.COLORS["pending"],
-                })
+                rows.append(
+                    {
+                        "key": key,
+                        "url_html": url_html,
+                        "link_col": link_html,
+                        "version": backend.version or "-",
+                        "sparql_link": sparql_html,
+                        "status_msg": "Pending",
+                        "color": self.COLORS["pending"],
+                    }
+                )
 
         column_defs = [
             {"headerName": "ID", "field": "key", "width": 150, "pinned": "left"},
             {"headerName": "Link", "field": "link_col", "width": 80},
             {"headerName": "Live Status", "field": "status_msg", "width": 180},
             {"headerName": "Version", "field": "version", "width": 200},
-            {
-                "headerName": "SPARQL Endpoint",
-                "field": "sparql_link",
-                "width": 100
-            },
+            {"headerName": "SPARQL Endpoint", "field": "sparql_link", "width": 100},
             {
                 "headerName": "Base URL",
                 "field": "url_html",
@@ -137,7 +136,7 @@ class BackendDashboard(Dashboard):
                     "overflow": "hidden",
                     "whiteSpace": "nowrap",
                 },
-            }
+            },
         ]
 
         grid_options = {

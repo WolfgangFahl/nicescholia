@@ -8,8 +8,8 @@ from dataclasses import field
 from pathlib import Path
 from typing import Dict, Optional
 
-from basemkit.yamlable import lod_storable
 import requests
+from basemkit.yamlable import lod_storable
 
 
 @lod_storable
@@ -23,7 +23,6 @@ class Backend:
     text_to_topic_q_text_enabled: Optional[bool] = None
     third_parties_enabled: Optional[bool] = None
     version: Optional[str] = None
-
 
     def fetch_config(self, timeout: float = 2.0) -> bool:
         """
@@ -50,7 +49,9 @@ class Backend:
                 self.sparql_endpoint_name = data.get("sparql_endpoint_name")
                 self.sparql_editurl = data.get("sparql_editurl")
                 self.sparql_embedurl = data.get("sparql_embedurl")
-                self.text_to_topic_q_text_enabled = data.get("text_to_topic_q_text_enabled")
+                self.text_to_topic_q_text_enabled = data.get(
+                    "text_to_topic_q_text_enabled"
+                )
                 self.third_parties_enabled = data.get("third_parties_enabled")
                 self.version = data.get("version")
                 return True
@@ -60,13 +61,14 @@ class Backend:
             # In a real app, you might want to log the error: print(f"Error fetching {config_url}: {_e}")
             return False
 
+
 @lod_storable
 class Backends:
     """
     Manages a collection of Scholia mirror backends
     """
 
-    backends: Dict[str, Backend]=field(default_factory=dict)
+    backends: Dict[str, Backend] = field(default_factory=dict)
 
     @classmethod
     def yaml_path(cls) -> str:
@@ -74,7 +76,7 @@ class Backends:
         return yaml_path
 
     @classmethod
-    def from_yaml_path(cls, yaml_path: str=None):
+    def from_yaml_path(cls, yaml_path: str = None):
         if yaml_path is None:
             yaml_path = cls.yaml_path()
         backends = cls.load_from_yaml_file(yaml_path)
