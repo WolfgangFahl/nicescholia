@@ -2,8 +2,9 @@
 Webserver definition
 """
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution, WebserverConfig
 from nicegui import Client, app, ui
@@ -11,9 +12,21 @@ from nicegui import Client, app, ui
 from nscholia.backend import Backends
 from nscholia.backend_dashboard import BackendDashboard
 from nscholia.endpoint_dashboard import EndpointDashboard
+from nscholia.endpoints import Endpoints, UpdateState
 from nscholia.examples_dashboard import ExampleDashboard
 from nscholia.google_sheet import GoogleSheet
 from nscholia.version import Version
+
+# Endpoint fields that must never be exposed via the REST API (credentials/
+# internal connection details) - see SECURITY handling for /api/endpoints.
+ENDPOINT_SECRET_FIELDS = {"auth", "user", "password", "host", "port"}
+
+
+def compact(record: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Drop keys whose value is None to avoid null-noise in JSON responses.
+    """
+    return {key: value for key, value in record.items() if value is not None}
 
 
 class ScholiaWebserver(InputWebserver):
@@ -38,6 +51,7 @@ class ScholiaWebserver(InputWebserver):
         super().__init__(config=ScholiaWebserver.get_config())
         self.sheet = None
         self.backends = None
+        self.endpoints = None
         version = self.config.version
         # OpenAPI metadata so /docs shows nicescholia instead of FastAPI defaults
         app.title = version.name
@@ -69,16 +83,110 @@ class ScholiaWebserver(InputWebserver):
             return version_record
 
         @app.get("/api/backends", tags=["nicescholia"])
-        def api_backends() -> Dict[str, Any]:
+        def api_backends(probe: bool = False, timeout: float = 2.0) -> Dict[str, Any]:
             """
             Get the configured Scholia mirror backends.
+
+            Args:
+                probe: if true, live-enrich each backend from its /backend
+                    endpoint (concurrently) - mirrors the /backends GUI dashboard.
+                timeout: per-backend request timeout in seconds when probing.
+
+            Returns:
+                mapping of backend key to its config; None fields are omitted
+                to avoid null-noise (raw config has most fields unset).
             """
-            if self.backends is None:
-                self.backends = Backends.from_yaml_path()
-            backends_record = {
-                key: asdict(backend) for key, backend in self.backends.backends.items()
-            }
-            return backends_record
+            return self.get_backends_record(probe=probe, timeout=timeout)
+
+        @app.get("/api/endpoints", tags=["nicescholia"])
+        def api_endpoints(probe: bool = False) -> Dict[str, Any]:
+            """
+            Get the configured SPARQL endpoints - REST counterpart of the
+            endpoint (home) dashboard.
+
+            Args:
+                probe: if true, add the live UpdateState (triples, timestamp)
+                    per endpoint - this runs SPARQL queries and is slow.
+
+            Returns:
+                mapping of endpoint key to a credential-stripped record; when
+                probing, an "update_state" object is added per endpoint.
+            """
+            return self.get_endpoints_record(probe=probe)
+
+        @app.get("/api/examples", tags=["nicescholia"])
+        def api_examples() -> List[Dict[str, Any]]:
+            """
+            Get the Scholia example queries - REST counterpart of the
+            examples dashboard. Returns an empty list if the source Google
+            Sheet is not loaded.
+            """
+            return self.get_examples_record()
+
+    def get_backends_record(
+        self, probe: bool = False, timeout: float = 2.0
+    ) -> Dict[str, Any]:
+        """
+        Build the /api/backends response.
+
+        Args:
+            probe: live-enrich each backend from its /backend endpoint.
+            timeout: per-backend request timeout in seconds when probing.
+        """
+        if self.backends is None:
+            self.backends = Backends.from_yaml_path()
+        backends = self.backends.backends
+        if probe and backends:
+            with ThreadPoolExecutor(max_workers=len(backends)) as executor:
+                for backend in backends.values():
+                    executor.submit(backend.fetch_config, timeout)
+        backends_record = {
+            key: compact(asdict(backend)) for key, backend in backends.items()
+        }
+        return backends_record
+
+    def get_endpoints_record(self, probe: bool = False) -> Dict[str, Any]:
+        """
+        Build the /api/endpoints response with credential fields removed.
+
+        Args:
+            probe: add the live UpdateState (triples, timestamp) per endpoint.
+        """
+        if self.endpoints is None:
+            self.endpoints = Endpoints()
+        endpoints = self.endpoints.get_endpoints()
+        endpoints_record = {}
+        for key, ep in endpoints.items():
+            record = compact(asdict(ep))
+            for secret in ENDPOINT_SECRET_FIELDS:
+                record.pop(secret, None)
+            if probe:
+                update_state = UpdateState.from_endpoint(self.endpoints, ep)
+                record["update_state"] = compact(asdict(update_state))
+            endpoints_record[key] = record
+        return endpoints_record
+
+    def get_examples_record(self) -> List[Dict[str, Any]]:
+        """
+        Build the /api/examples response from the preloaded Google Sheet.
+        Returns an empty list when the sheet is not available.
+        """
+        if not self.sheet or not getattr(self.sheet, "lod", None):
+            return []
+        examples = []
+        for item in self.sheet.lod:
+            link = item.get("link", "")
+            if not link or not str(link).startswith("http"):
+                continue
+            examples.append(
+                {
+                    "link": link,
+                    "comment": item.get("comment", ""),
+                    "status": item.get("status", ""),
+                    "pr": item.get("PR", ""),
+                }
+            )
+        return examples
 
     def configure_run(self):
         """
