@@ -2,15 +2,18 @@
 Webserver definition
 """
 
+from dataclasses import asdict
+from typing import Any, Dict
+
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution, WebserverConfig
-from nicegui import Client, ui
-from nscholia.version import Version
+from nicegui import Client, app, ui
 
 from nscholia.backend import Backends
 from nscholia.backend_dashboard import BackendDashboard
 from nscholia.endpoint_dashboard import EndpointDashboard
 from nscholia.examples_dashboard import ExampleDashboard
 from nscholia.google_sheet import GoogleSheet
+from nscholia.version import Version
 
 
 class ScholiaWebserver(InputWebserver):
@@ -35,6 +38,11 @@ class ScholiaWebserver(InputWebserver):
         super().__init__(config=ScholiaWebserver.get_config())
         self.sheet = None
         self.backends = None
+        version = self.config.version
+        # OpenAPI metadata so /docs shows nicescholia instead of FastAPI defaults
+        app.title = version.name
+        app.version = version.version
+        app.description = version.description
 
         @ui.page("/examples")
         async def examples(client: Client):
@@ -44,6 +52,33 @@ class ScholiaWebserver(InputWebserver):
         async def backends(client: Client):
             return await self.page(client, ScholiaSolution.backends)
 
+        @app.get("/api/version", tags=["nicescholia"])
+        def api_version() -> Dict[str, Any]:
+            """
+            Get nicescholia version information.
+            """
+            version_record = {
+                "name": version.name,
+                "version": version.version,
+                "date": version.date,
+                "updated": version.updated,
+                "description": version.description,
+                "doc_url": version.doc_url,
+                "cm_url": version.cm_url,
+            }
+            return version_record
+
+        @app.get("/api/backends", tags=["nicescholia"])
+        def api_backends() -> Dict[str, Any]:
+            """
+            Get the configured Scholia mirror backends.
+            """
+            if self.backends is None:
+                self.backends = Backends.from_yaml_path()
+            backends_record = {
+                key: asdict(backend) for key, backend in self.backends.backends.items()
+            }
+            return backends_record
 
     def configure_run(self):
         """
@@ -62,7 +97,7 @@ class ScholiaWebserver(InputWebserver):
             print(f"Sheet preload failed: {ex}")
         # Preload backends on server startup
         try:
-            self.backends=Backends.from_yaml_path()
+            self.backends = Backends.from_yaml_path()
         except Exception as ex:
             print(f"Backends preload failed: {ex}")
 
@@ -118,7 +153,6 @@ class ScholiaSolution(InputWebSolution):
             self.dashboard.setup_ui()
 
         await self.setup_content_div(show)
-
 
     async def home(self):
         """
