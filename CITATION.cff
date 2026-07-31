@@ -1,0 +1,30 @@
+# CITATION.cff for https://github.com/WolfgangFahl/nicescholia
+# This CITATION.cff file was initially generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+cff-version: 1.2.0
+title: nicescholia
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Wolfgang
+    family-names: Fahl
+    affiliation: BITPlan GmbH
+    orcid: 'https://orcid.org/0000-0002-0821-6995'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.17967779
+    description: Concept DOI (all versions) on Zenodo
+repository-code: 'https://github.com/WolfgangFahl/nicescholia'
+url: 'https://nicescholia.wikidata.dbis.rwth-aachen.de/'
+abstract: >-
+  nicegui based scholia
+keywords:
+  - Scholia
+  - Wikidata
+  - SPARQL
+  - Scholarly Knowledge Graph
+  - NiceGUI
+  - Python
+license: Apache-2.0
