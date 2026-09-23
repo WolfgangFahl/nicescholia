@@ -190,7 +190,10 @@ class UpdateState:
                 if qlod and "tripleCount" in qlod[0]:
                     update_state.triples = int(qlod[0].get("tripleCount"))
             except Exception as ex:
+                # the endpoint answered its update state but not the count -
+                # a count of 0 with status ok would hide that
                 update_state.error = f"triple count: {type(ex).__name__}: {ex}"
+                update_state.status = cls.QUERY_FAILED
         return update_state
 
 
