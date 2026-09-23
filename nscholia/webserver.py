@@ -2,6 +2,7 @@
 Webserver definition
 """
 
+import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from typing import Any, Dict, List
@@ -12,7 +13,7 @@ from nicegui import Client, app, ui
 from nscholia.backend import Backends
 from nscholia.backend_dashboard import BackendDashboard
 from nscholia.endpoint_dashboard import EndpointDashboard
-from nscholia.endpoints import Endpoints, UpdateState
+from nscholia.endpoints import Endpoints, UpdateState, UpdateStateCache
 from nscholia.examples_dashboard import ExampleDashboard
 from nscholia.google_sheet import GoogleSheet
 from nscholia.version import Version
@@ -20,6 +21,9 @@ from nscholia.version import Version
 # Endpoint fields that must never be exposed via the REST API (credentials/
 # internal connection details) - see SECURITY handling for /api/endpoints.
 ENDPOINT_SECRET_FIELDS = {"auth", "user", "password", "host", "port"}
+
+# how often the triple counts are measured with a real query
+UPDATE_STATE_INTERVAL = 24 * 60 * 60
 
 
 def compact(record: Dict[str, Any]) -> Dict[str, Any]:
@@ -52,6 +56,7 @@ class ScholiaWebserver(InputWebserver):
         self.sheet = None
         self.backends = None
         self.endpoints = None
+        self.update_state_cache = UpdateStateCache()
         version = self.config.version
         # OpenAPI metadata so /docs shows nicescholia instead of FastAPI defaults
         app.title = version.name
@@ -105,12 +110,13 @@ class ScholiaWebserver(InputWebserver):
             endpoint (home) dashboard.
 
             Args:
-                probe: if true, add the live UpdateState (triples, timestamp)
-                    per endpoint - this runs SPARQL queries and is slow.
+                probe: if true, measure the UpdateState (triples, timestamp)
+                    per endpoint now - this runs SPARQL queries and is slow;
+                    without it the states of the daily refresh are returned.
 
             Returns:
-                mapping of endpoint key to a credential-stripped record; when
-                probing, an "update_state" object is added per endpoint.
+                mapping of endpoint key to a credential-stripped record with an
+                "update_state" object per endpoint where one has been measured.
             """
             return self.get_endpoints_record(probe=probe)
 
@@ -150,21 +156,42 @@ class ScholiaWebserver(InputWebserver):
         Build the /api/endpoints response with credential fields removed.
 
         Args:
-            probe: add the live UpdateState (triples, timestamp) per endpoint.
+            probe: measure the UpdateState (triples, timestamp) now instead of
+                returning the states of the daily refresh.
         """
         if self.endpoints is None:
             self.endpoints = Endpoints()
+        if probe:
+            self.update_state_cache.refresh(self.endpoints, force=True)
         endpoints = self.endpoints.get_endpoints()
         endpoints_record = {}
         for key, ep in endpoints.items():
             record = compact(asdict(ep))
             for secret in ENDPOINT_SECRET_FIELDS:
                 record.pop(secret, None)
-            if probe:
-                update_state = UpdateState.from_endpoint(self.endpoints, ep)
+            update_state = self.update_state_cache.get(key)
+            if update_state:
                 record["update_state"] = compact(asdict(update_state))
             endpoints_record[key] = record
         return endpoints_record
+
+    async def refresh_update_states(self, force: bool = False):
+        """
+        measure the update state of every endpoint with a real query -
+        called at startup and then once per UPDATE_STATE_INTERVAL
+
+        Args:
+            force: measure even when the cached states are still fresh
+        """
+        if self.endpoints is None:
+            self.endpoints = Endpoints()
+        await asyncio.get_event_loop().run_in_executor(
+            None, self.update_state_cache.refresh, self.endpoints, force
+        )
+        print(
+            f"update states refreshed at {self.update_state_cache.refreshed} "
+            f"for {len(self.update_state_cache.states)} endpoints"
+        )
 
     def get_examples_record(self) -> List[Dict[str, Any]]:
         """
@@ -208,6 +235,15 @@ class ScholiaWebserver(InputWebserver):
             self.backends = Backends.from_yaml_path()
         except Exception as ex:
             print(f"Backends preload failed: {ex}")
+        # Preload endpoints and measure the update states daily with real
+        # queries - the first run happens shortly after startup so that the
+        # dashboard never shows stale or guessed triple counts.
+        try:
+            self.endpoints = Endpoints()
+        except Exception as ex:
+            print(f"Endpoints preload failed: {ex}")
+        app.timer(5.0, self.refresh_update_states, once=True)
+        app.timer(UPDATE_STATE_INTERVAL, lambda: self.refresh_update_states(force=True))
 
 
 class ScholiaSolution(InputWebSolution):

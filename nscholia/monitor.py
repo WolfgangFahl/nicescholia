@@ -9,6 +9,8 @@ from typing import Optional
 
 import httpx
 
+from nscholia.useragent import USER_AGENT
+
 
 @dataclass
 class StatusResult:
@@ -31,10 +33,9 @@ class Monitor:
     Checks endpoint availability
     """
 
-    # Default User-Agent to avoid being blocked by servers
-    DEFAULT_USER_AGENT = (
-        "nscholia-monitor/1.0 (https://github.com/WolfgangFahl/nscholia)"
-    )
+    # Default User-Agent to avoid being blocked by servers - the same header
+    # the SPARQL calls use, see nscholia.useragent
+    DEFAULT_USER_AGENT = USER_AGENT
 
     @staticmethod
     async def check(

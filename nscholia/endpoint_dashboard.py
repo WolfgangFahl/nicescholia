@@ -11,7 +11,7 @@ from ngwidgets.widgets import Link
 from nicegui import ui
 
 from nscholia.dashboard import Dashboard
-from nscholia.endpoints import Endpoints, UpdateState
+from nscholia.endpoints import UpdateState
 from nscholia.monitor import Monitor
 
 
@@ -22,108 +22,77 @@ class EndpointDashboard(Dashboard):
 
     def __init__(self, solution):
         super().__init__(solution)
-        # Initialize the endpoints provider
-        self.endpoints_provider = Endpoints()
+        # endpoints and the daily refreshed update states live on the webserver
+        self.endpoints_provider = self.webserver.endpoints
+        self.update_state_cache = self.webserver.update_state_cache
 
-        # Initialize the endpoints provider
-        self.endpoints_provider = Endpoints()
+    def show_state(self, row: dict, update_state: UpdateState):
+        """
+        show the given update state in the given row - the color is the
+        outcome of the real SPARQL call, not of a website ping
+
+        Args:
+            row: the grid row to fill
+            update_state: the measured state
+        """
+        row["triples"] = update_state.triples or 0
+        row["checked"] = update_state.checked or ""
+        if update_state.status == UpdateState.OK:
+            row["status"] = "🟢 ok"
+            row["timestamp"] = update_state.timestamp or ""
+            row["color"] = self.COLORS["success"]
+        elif update_state.status == UpdateState.QUERY_FAILED:
+            row["status"] = f"🟡 query failed: {update_state.error or 'unknown'}"
+            row["timestamp"] = ""
+            row["color"] = self.COLORS["warning"]
+        else:
+            row["status"] = f"🔴 unreachable: {update_state.error or 'unknown'}"
+            row["timestamp"] = ""
+            row["color"] = self.COLORS["error"]
+
+    def show_cached(self):
+        """
+        show the cached states - no query is run here
+        """
+        if not self.grid:
+            return
+        for row in self.grid.lod:
+            update_state = self.update_state_cache.get(row["endpoint_key"])
+            if update_state:
+                self.show_state(row, update_state)
+            else:
+                row["status"] = "pending"
+                row["color"] = self.COLORS["checking"]
+        self.grid.update()
 
     async def check_all(self):
-        """Run checks for all endpoints in the grid"""
+        """
+        measure all endpoints with a real query and show the result
+        """
         if not self.grid:
             return
 
-        ui.notify("Checking endpoints...")
-
-        # Access the List of Dicts (LOD) directly from the wrapper
-        rows = self.grid.lod
-
-        for row in rows:
-            # Visual update for checking state
-            row["status"] = "Checking..."
+        ui.notify("Checking endpoints ...")
+        for row in self.grid.lod:
+            row["status"] = "checking ..."
             row["color"] = self.COLORS["checking"]
-            row["triples"] = 0
-            row["timestamp"] = ""
-
-            # Update the grid view to show 'Checking...' state immediately
-            self.grid.update()
-
-            # Async check
-            try:
-                url = row["url"]
-                # First check if endpoint is online
-                result = await Monitor.check(url)
-
-                # Update based on availability
-                if result.is_online:
-                    row["status"] = f"Online ({result.status_code})"
-                    row["latency"] = result.latency
-
-                    # Now try to get update state information (triples & timestamp)
-                    ep_key = row["endpoint_key"]
-                    endpoints_data = self.endpoints_provider.get_endpoints()
-
-                    update_success = False
-                    if ep_key in endpoints_data:
-                        ep = endpoints_data[ep_key]
-                        try:
-                            # Run update state query in executor to avoid blocking
-                            update_state = (
-                                await asyncio.get_event_loop().run_in_executor(
-                                    None,
-                                    UpdateState.from_endpoint,
-                                    self.endpoints_provider,
-                                    ep,
-                                )
-                            )
-
-                            if update_state.success:
-                                # SUCCESS: Endpoint online AND update query succeeded
-                                row["triples"] = update_state.triples or 0
-                                row["timestamp"] = update_state.timestamp or ""
-                                row["color"] = self.COLORS["success"]
-                                update_success = True
-                            else:
-                                # WARNING: Endpoint online BUT update query failed
-                                row["triples"] = 0
-                                row["timestamp"] = update_state.error or "N/A"
-                                row["status"] = (
-                                    f"Online ({result.status_code}) ⚠️ {update_state.error or 'Update query failed'}"
-                                )
-                                row["color"] = self.COLORS["warning"]
-
-                        except Exception as update_ex:
-                            # WARNING: Endpoint online BUT update query threw exception
-                            row["triples"] = 0
-                            row["timestamp"] = str(update_ex)
-                            row["status"] = (
-                                f"Online ({result.status_code}) ⚠️ Update error: {str(update_ex)}"
-                            )
-                            row["color"] = self.COLORS["warning"]
-
-                    # If no update state check was attempted or key not found
-                    if not update_success and row["color"] == self.COLORS["checking"]:
-                        row["color"] = self.COLORS["warning"]
-                        row["status"] += " (No update data)"
-
-                else:
-                    # ERROR: Endpoint offline/unreachable
-                    row["status"] = result.error or f"Error {result.status_code}"
-                    row["latency"] = 0
-                    row["triples"] = 0
-                    row["timestamp"] = ""
-                    row["color"] = self.COLORS["error"]
-
-            except Exception as ex:
-                # ERROR: Exception during availability check
-                row["status"] = f"Exception: {str(ex)}"
-                row["latency"] = 0
-                row["triples"] = 0
-                row["timestamp"] = ""
-                row["color"] = self.COLORS["error"]
-
-        # Final update to show results
         self.grid.update()
+
+        # latency of the website of each endpoint - informational only
+        for row in self.grid.lod:
+            try:
+                result = await Monitor.check(row["url"])
+                row["latency"] = result.latency
+            except Exception:
+                row["latency"] = 0
+
+        await asyncio.get_event_loop().run_in_executor(
+            None,
+            self.update_state_cache.refresh,
+            self.endpoints_provider,
+            True,
+        )
+        self.show_cached()
         ui.notify("Status check complete")
 
     def setup_ui(self):
@@ -161,10 +130,11 @@ class EndpointDashboard(Dashboard):
                     "endpoint_url": ep_url,  # Original SPARQL endpoint
                     "endpoint_key": key,  # Store the key for later lookup
                     "link": link_html,
-                    "status": "Pending",
+                    "status": "pending",
                     "latency": 0.0,
                     "triples": 0,
                     "timestamp": "",
+                    "checked": "",
                     "color": "#ffffff",
                 }
             )
@@ -211,6 +181,12 @@ class EndpointDashboard(Dashboard):
                 "sortable": True,
                 "width": 200,
             },
+            {
+                "headerName": "Measured",
+                "field": "checked",
+                "sortable": True,
+                "width": 170,
+            },
         ]
 
         grid_options = {
@@ -231,4 +207,5 @@ class EndpointDashboard(Dashboard):
         )
 
         self.grid = ListOfDictsGrid(lod=rows, config=config)
-        ui.timer(0.5, self.check_all, once=True)
+        # show what the daily refresh measured - Refresh runs a live check
+        self.show_cached()
