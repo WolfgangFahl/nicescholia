@@ -5,6 +5,7 @@ Created on 2026-09-23
 """
 
 import tempfile
+import urllib.error
 from pathlib import Path
 
 from basemkit.basetest import Basetest
@@ -30,6 +31,24 @@ class TestUpdateStateCache(Basetest):
         self.assertTrue(USER_AGENT.startswith("nicescholia/"))
         self.assertIn("github.com", USER_AGENT)
         self.assertEqual(USER_AGENT, Monitor.DEFAULT_USER_AGENT)
+
+    def testQLeverTripleCount(self):
+        """
+        the triple count of a QLever endpoint comes from its stats call
+        """
+        em = Endpoints()
+        for name in ["wikidata-qlever", "wikidata-qlever-dbis"]:
+            ep = em.get_endpoints().get(name)
+            self.assertIsNotNone(ep, name)
+            try:
+                triple_count = em.qlever_triple_count(ep)
+            except urllib.error.HTTPError as ex:
+                if ex.code == 429:
+                    self.skipTest(f"{name} rate limits this host: {ex}")
+                raise
+            if self.debug:
+                print(f"{name}: {triple_count:,}")
+            self.assertGreater(triple_count, 10_000_000_000, name)
 
     def testClassify(self):
         """
