@@ -283,7 +283,9 @@ class UpdateStateCache:
             key, ep = item
             return key, UpdateState.from_endpoint(em, ep)
 
-        with ThreadPoolExecutor(max_workers=min(self.max_workers, len(items) or 1)) as executor:
+        with ThreadPoolExecutor(
+            max_workers=min(self.max_workers, len(items) or 1)
+        ) as executor:
             for key, state in executor.map(measure, items):
                 self.states[key] = state
         self.refreshed = datetime.now().isoformat(timespec="seconds")
