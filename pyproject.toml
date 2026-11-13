@@ -17,6 +17,9 @@ dependencies = [
   "ngwidgets>=0.30.3",
   # https://github.com/WolfgangFahl/snapquery
   "snapquery>=0.2.5",
+  # https://github.com/WolfgangFahl/pyLoDStorage
+  # prefix sets of the endpoints for the aspect queries
+  "pyLodStorage>=0.19.9",
   # https://github.com/encode/httpx
   "httpx>=0.27.0",
   # https://pypi.org/project/pandas/
