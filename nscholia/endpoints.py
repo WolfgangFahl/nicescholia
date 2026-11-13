@@ -5,6 +5,7 @@ author wf
 
 import json
 import os
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
@@ -77,6 +78,19 @@ class Endpoints:
             query = self.qm.queriesByName.get(query_name)
             query.endpoint = ep.endpoint
         return query
+
+    def qlever_triple_count(self, ep: Endpoint) -> int:
+        """
+        get the triple count of a QLever endpoint from its index statistics -
+        a COUNT(*) scan over the whole index is what the public QLever
+        instances refuse with 429 or fail with 500
+        """
+        url = ep.endpoint.rstrip("?") + "?cmd=stats"
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            stats = json.load(response)
+        triple_count = int(stats["num-triples-normal"])
+        return triple_count
 
     def triple_count_query_for_endpoint(self, ep: Endpoint) -> Query:
         """
@@ -185,12 +199,18 @@ class UpdateState:
             # the QLever update state query returns a timestamp only - count
             # the triples with a second real call
             try:
-                count_query = em.triple_count_query_for_endpoint(ep)
-                qlod = em.runQuery(count_query)
-                if qlod and "tripleCount" in qlod[0]:
-                    update_state.triples = int(qlod[0].get("tripleCount"))
+                if ep.database == "qlever":
+                    update_state.triples = em.qlever_triple_count(ep)
+                else:
+                    count_query = em.triple_count_query_for_endpoint(ep)
+                    qlod = em.runQuery(count_query)
+                    if qlod and "tripleCount" in qlod[0]:
+                        update_state.triples = int(qlod[0].get("tripleCount"))
             except Exception as ex:
+                # the endpoint answered its update state but not the count -
+                # a count of 0 with status ok would hide that
                 update_state.error = f"triple count: {type(ex).__name__}: {ex}"
+                update_state.status = cls.QUERY_FAILED
         return update_state
 
 
