@@ -5,11 +5,14 @@ Webserver definition
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
+from fastapi import HTTPException
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution, WebserverConfig
 from nicegui import Client, app, ui
 
+from nscholia.aspect import AspectQueries, AspectResult
+from nscholia.aspect_view import AspectView
 from nscholia.backend import Backends
 from nscholia.backend_dashboard import BackendDashboard
 from nscholia.endpoint_dashboard import EndpointDashboard
@@ -56,6 +59,7 @@ class ScholiaWebserver(InputWebserver):
         self.sheet = None
         self.backends = None
         self.endpoints = None
+        self.aspect_queries = None
         self.update_state_cache = UpdateStateCache()
         version = self.config.version
         # OpenAPI metadata so /docs shows nicescholia instead of FastAPI defaults
@@ -128,6 +132,100 @@ class ScholiaWebserver(InputWebserver):
             Sheet is not loaded.
             """
             return self.get_examples_record()
+
+        self.register_aspect_routes()
+
+    def get_aspect_queries(self) -> AspectQueries:
+        """
+        get the named parameterized queries of the aspects
+        """
+        if self.aspect_queries is None:
+            if self.endpoints is None:
+                self.endpoints = Endpoints()
+            self.aspect_queries = AspectQueries(self.endpoints)
+        return self.aspect_queries
+
+    def get_aspect_result(
+        self,
+        aspect: str,
+        view: str,
+        pid: str,
+        limit: Optional[int] = None,
+        endpoint: Optional[str] = None,
+    ) -> AspectResult:
+        """
+        run the query of a single view for the given start node
+
+        Args:
+            aspect: the aspect e.g. author
+            view: the view e.g. list-of-publications
+            pid: the identifier of the start node e.g. Q80
+            limit: the maximum number of rows - default of the query if None
+            endpoint: the endpoint name - first working endpoint if None
+        """
+        params: Dict[str, Any] = {"q": pid}
+        if limit is not None:
+            params["limit"] = limit
+        result = self.get_aspect_queries().run(
+            aspect, view, params, endpoint_name=endpoint
+        )
+        return result
+
+    def register_aspect_routes(self):
+        """
+        register the Scholia compatible routes per aspect and view:
+        /<aspect>/<pid> for the aspect, /<aspect>/<view>/<pid> for a single
+        view and /api/<aspect>/<view>/<pid> as its REST twin
+        see https://github.com/WolfgangFahl/nicescholia/issues/17
+        """
+        for aspect, views in self.get_aspect_queries().views().items():
+            self.register_aspect_page(aspect)
+            for view in views:
+                self.register_view_routes(aspect, view)
+
+    def register_aspect_page(self, aspect: str):
+        """
+        register the page of the given aspect
+        """
+
+        @ui.page(f"/{aspect}/{{pid}}")
+        async def aspect_page(client: Client, pid: str):
+            return await self.page(client, ScholiaSolution.aspect, aspect, pid)
+
+    def register_view_routes(self, aspect: str, view: str):
+        """
+        register the page and the REST twin of a single view
+        """
+
+        @ui.page(f"/{aspect}/{view}/{{pid}}")
+        async def view_page(client: Client, pid: str, limit: Optional[int] = None):
+            return await self.page(
+                client, ScholiaSolution.aspect_view, aspect, view, pid, limit
+            )
+
+        @app.get(
+            f"/api/{aspect}/{view}/{{pid}}",
+            tags=[aspect],
+            name=f"{aspect}_{view}",
+        )
+        def api_view(
+            pid: str, limit: Optional[int] = None, endpoint: Optional[str] = None
+        ) -> Dict[str, Any]:
+            """
+            Get the rows of this view for the given start node.
+
+            Args:
+                pid: the identifier of the start node e.g. Q80
+                limit: the maximum number of rows - default of the query if omitted
+                endpoint: the endpoint name - first working endpoint if omitted
+            """
+            try:
+                result = self.get_aspect_result(aspect, view, pid, limit, endpoint)
+            except ValueError as ex:
+                raise HTTPException(status_code=400, detail=str(ex))
+            if result.endpoint_name is None:
+                raise HTTPException(status_code=502, detail=result.errors)
+            return asdict(result)
 
     def get_backends_record(
         self, probe: bool = False, timeout: float = 2.0
@@ -274,6 +372,40 @@ class ScholiaSolution(InputWebSolution):
             #    "code",
             #    new_tab=True,
             # )
+
+    async def aspect(self, aspect: str, pid: str):
+        """
+        aspect page: all views of the aspect for the given start node
+
+        Args:
+            aspect: the aspect e.g. author
+            pid: the identifier of the start node e.g. Q80
+        """
+
+        def show():
+            views = self.webserver.get_aspect_queries().views().get(aspect, [])
+            for view in views:
+                AspectView(self, aspect, view).setup_ui(pid)
+
+        await self.setup_content_div(show)
+
+    async def aspect_view(
+        self, aspect: str, view: str, pid: str, limit: Optional[int] = None
+    ):
+        """
+        single view page of an aspect
+
+        Args:
+            aspect: the aspect e.g. author
+            view: the view e.g. list-of-publications
+            pid: the identifier of the start node e.g. Q80
+            limit: the maximum number of rows
+        """
+
+        def show():
+            AspectView(self, aspect, view).setup_ui(pid, limit)
+
+        await self.setup_content_div(show)
 
     async def examples(self):
         """

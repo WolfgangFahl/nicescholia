@@ -39,11 +39,13 @@ wiki id `media`): PLAN-AND-ASK, Document-First, DMAIC histogram, English-only.
 | `nscholia/endpoints.py` | SPARQL endpoint access and `UpdateState` |
 | `nscholia/endpoint_dashboard.py` | endpoint update-state dashboard (home page) |
 | `nscholia/examples_dashboard.py` | Scholia examples dashboard (Google Sheet driven) |
+| `nscholia/aspect.py` | `AspectQueries` — named parameterized queries of the Scholia aspects, run on the first working endpoint with the prefix sets of the endpoint |
+| `nscholia/aspect_view.py` | `AspectView` — a single view of an aspect shown by the display type of its query |
 | `nscholia/backend.py` | `Backend`/`Backends` — Scholia mirror backend config (`nscholia_examples/backends.yaml`) |
 | `nscholia/backend_dashboard.py` | backend live-status dashboard |
 | `nscholia/monitor.py` | URL availability checks |
 | `nscholia/version.py` | `Version` dataclass — single source of project metadata |
-| `nscholia_examples/` | YAML configs: `backends.yaml`, `dashboard_queries.yaml` |
+| `nscholia_examples/` | YAML configs: `backends.yaml`, `dashboard_queries.yaml`, `aspect_queries.yaml` |
 | `tests/` | unittest based tests (`Basetest`/`WebserverTest`) |
 
 ## REST API
@@ -53,6 +55,17 @@ Registered in `ScholiaWebserver.__init__` via the NiceGUI FastAPI `app`
 
 - `GET /api/version` — version metadata
 - `GET /api/backends` — configured Scholia mirror backends
+- `GET /api/<aspect>/<view>/<pid>` — rows of a single view, e.g. `/api/author/list-of-publications/Q80`
+
+## Aspect queries
+
+Scholia is replicated walk by walk, see [#15](https://github.com/WolfgangFahl/nicescholia/issues/15):
+
+- one query issue per walk; the query is taken over once from its Scholia template and from then on owned by nicescholia
+- queries live in `nscholia_examples/aspect_queries.yaml` in the pyLoDStorage format, named `<aspect>_<view>` after the Scholia panel, with a `param_list` with defaults and a `<name>-count` companion
+- a query carries no PREFIX lines — the prefixes come from the `prefix_sets` of the endpoint
+- routes: `/<aspect>/<pid>` aspect page, `/<aspect>/<view>/<pid>` single view, see [#17](https://github.com/WolfgangFahl/nicescholia/issues/17)
+- expected results in the tests are bounds and members: they can falsify a walk, not verify it
 
 ## Conventions
 

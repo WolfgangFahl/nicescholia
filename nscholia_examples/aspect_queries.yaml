@@ -1,0 +1,95 @@
+#
+# Named parameterized queries of the Scholia aspects for nicescholia
+# see https://github.com/WolfgangFahl/nicescholia/issues/15
+#
+# query names follow the Scholia panel names <aspect>_<view>
+# a query does not carry PREFIX lines - the prefixes come from the
+# prefix_sets of the endpoint the query is run on
+#
+# WF 2026-11-13
+'author_list-of-publications':
+  title: List of publications of an author
+  description: |
+    Papers of an author identified by Wikidata QID.
+    Walk: Scholar <-author P50- Paper, see https://github.com/WolfgangFahl/nicescholia/issues/16
+    Origin: WDscholia/scholia 3af806da scholia/app/templates/author_list-of-publications.sparql
+    taken over once with the label macros expanded for en.
+  param_list:
+    - name: q
+      type: str
+      default_value: Q80 # Tim Berners-Lee
+    - name: limit
+      type: int
+      default_value: 10
+  sparql: |
+    #defaultView:Table
+    SELECT (MIN(?dates) AS ?date) ?work ?workLabel (GROUP_CONCAT(DISTINCT ?type_label; SEPARATOR=", ") AS ?type) (SAMPLE(?pages_) AS ?pages) ?venue ?venueLabel (GROUP_CONCAT(DISTINCT ?author_label; SEPARATOR=", ") AS ?authors) (CONCAT("../authors/", GROUP_CONCAT(DISTINCT SUBSTR(STR(?author),32); SEPARATOR=",")) AS ?authorsUrl) WHERE {
+      ?work wdt:P50 wd:{{ q }} .
+      { # By standard GROUP_CONCAT does not sort, but BlazeGraph seems to sort.
+        SELECT ?work ?author ?author_label WHERE {
+          ?work wdt:P50 wd:{{ q }} .
+          ?work p:P50 [
+            ps:P50 ?author ;
+            pq:P1545 ?order
+          ] .
+          BIND (xsd:integer(?order) AS ?n)
+          OPTIONAL {
+            wd:{{ q }} ^wdt:P50 ?work .
+            ?work wdt:P50 ?author .
+            ?author rdfs:label ?author_label_ . FILTER (LANG(?author_label_) = 'en')
+          }
+          BIND (COALESCE(?author_label_, SUBSTR(STR(?author),32)) AS ?author_label)
+        }
+        ORDER BY ?n
+      }
+      OPTIONAL {
+        wd:{{ q }} ^wdt:P50 ?work .
+        ?work wdt:P31 ?type_ .
+        ?type_ rdfs:label ?type_label . FILTER (LANG(?type_label) = 'en')
+      }
+      ?work wdt:P577 ?datetimes .
+      BIND (xsd:date(?datetimes) AS ?dates)
+      OPTIONAL {
+        wd:{{ q }} ^wdt:P50 ?work .
+        ?work wdt:P1104 ?pages_
+      }
+      OPTIONAL {
+        wd:{{ q }} ^wdt:P50 ?work .
+        ?work wdt:P1433 ?venue
+      }
+      OPTIONAL { ?work rdfs:label ?workLabel. FILTER(LANG(?workLabel) = "en") }
+      BIND (IF(BOUND (?venue), ?venue, <http://doesntexist.example.com/nexistepas>) AS ?venue__)
+      OPTIONAL { ?venue__ rdfs:label ?venueLabel. FILTER(LANG(?venueLabel) = "en") }
+    }
+    GROUP BY ?work ?workLabel ?venue ?venueLabel
+    ORDER BY DESC(?date)
+    LIMIT {{ limit }}
+'author_list-of-publications-count':
+  title: Number of publications of an author
+  description: |
+    Count companion of author_list-of-publications:
+    the number of its rows without limit.
+  param_list:
+    - name: q
+      type: str
+      default_value: Q80 # Tim Berners-Lee
+  sparql: |
+    SELECT (COUNT(*) AS ?count) WHERE {
+      {
+        SELECT ?work ?workLabel ?venue ?venueLabel WHERE {
+          ?work wdt:P50 wd:{{ q }} .
+          ?work p:P50 [
+            ps:P50 ?author ;
+            pq:P1545 ?order
+          ] .
+          ?work wdt:P577 ?datetimes .
+          OPTIONAL {
+            ?work wdt:P1433 ?venue
+          }
+          OPTIONAL { ?work rdfs:label ?workLabel. FILTER(LANG(?workLabel) = "en") }
+          BIND (IF(BOUND (?venue), ?venue, <http://doesntexist.example.com/nexistepas>) AS ?venue__)
+          OPTIONAL { ?venue__ rdfs:label ?venueLabel. FILTER(LANG(?venueLabel) = "en") }
+        }
+        GROUP BY ?work ?workLabel ?venue ?venueLabel
+      }
+    }
