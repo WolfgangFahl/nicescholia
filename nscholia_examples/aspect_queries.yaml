@@ -93,3 +93,56 @@
         GROUP BY ?work ?workLabel ?venue ?venueLabel
       }
     }
+'author_venue-statistics':
+  title: Venue statistics of an author
+  description: |
+    Venues an author published in, with the number of works per venue.
+    Walk: Scholar <-author P50- Paper -published in P1433-> Venue,
+    see https://github.com/WolfgangFahl/nicescholia/issues/15
+    Origin: WDscholia/scholia 3af806da scholia/app/templates/author_venue-statistics.sparql
+    taken over once with the label macro expanded for en and the target prefix
+    replaced by the parameter.
+  param_list:
+    - name: q
+      type: str
+      default_value: Q2399315 # Leena Peltonen-Palotie, the author example of the examples sheet
+    - name: limit
+      type: int
+      default_value: 10
+  sparql: |
+    #defaultView:Table
+    # Venue statistics for a specific author
+    SELECT ?count (SAMPLE(?short_name_) AS ?short_name) ?venue ?venueLabel (CONCAT("/venue/", SUBSTR(STR(?venue),32)) AS ?venueUrl) ?topics ?topicsUrl WHERE {
+      {
+        SELECT (COUNT(DISTINCT ?work) AS ?count) ?venue (GROUP_CONCAT(DISTINCT ?topic_label; SEPARATOR=", ") AS ?topics) (CONCAT("../topics/", GROUP_CONCAT(DISTINCT SUBSTR(STR(?topic),32); SEPARATOR=",")) AS ?topicsUrl) WHERE {
+          ?work wdt:P50 wd:{{ q }} .
+          ?work wdt:P1433 ?venue .
+          OPTIONAL {
+            ?venue wdt:P921 ?topic .
+            ?topic rdfs:label ?topic_label . FILTER (LANG(?topic_label) = 'en')
+          }
+        }
+        GROUP BY ?venue
+      }
+      OPTIONAL {
+        ?venue wdt:P1813 ?short_name_ .
+      }
+      OPTIONAL { ?venue rdfs:label ?venueLabel. FILTER(LANG(?venueLabel) = "en") }
+    }
+    GROUP BY ?count ?venue ?venueLabel ?topics ?topicsUrl
+    ORDER BY DESC(?count)
+    LIMIT {{ limit }}
+'author_venue-statistics-count':
+  title: Number of venues of an author
+  description: |
+    Count companion of author_venue-statistics:
+    the number of its rows without limit.
+  param_list:
+    - name: q
+      type: str
+      default_value: Q2399315 # Leena Peltonen-Palotie
+  sparql: |
+    SELECT (COUNT(DISTINCT ?venue) AS ?count) WHERE {
+      ?work wdt:P50 wd:{{ q }} .
+      ?work wdt:P1433 ?venue .
+    }

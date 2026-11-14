@@ -12,7 +12,7 @@ class Version:
     name = "nicescholia"
     version = nscholia.__version__
     date = "2025-12-17"
-    updated = "2026-11-13"
+    updated = "2026-11-14"
     description = "nicegui based scholia"
     authors = "Wolfgang Fahl"
     doc_url = "https://wiki.bitplan.com/index.php/nicescholia"

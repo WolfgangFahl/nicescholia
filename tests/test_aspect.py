@@ -94,6 +94,47 @@ class TestAspectQueries(Basetest):
                 works = [row["work"] for row in result.rows]
                 self.assertIn("http://www.wikidata.org/entity/Q29301445", works)
 
+    def test_author_venue_statistics(self):
+        """
+        test the walk Scholar <-author P50- Paper -published in P1433-> Venue
+        for Leena Peltonen-Palotie (Q2399315), the author example of the
+        examples sheet: at least 99 venues and Nature Genetics (Q976454)
+        is one of them; her list of publications has at least 314 entries
+        """
+        for endpoint_name in AspectQueries.ENDPOINT_NAMES:
+            with self.subTest(endpoint_name=endpoint_name):
+                count_result = self.aspect_queries.run(
+                    "author",
+                    "venue-statistics",
+                    endpoint_name=endpoint_name,
+                    count=True,
+                )
+                self.assertEqual({}, count_result.errors)
+                count = int(count_result.rows[0]["count"])
+                result = self.aspect_queries.run(
+                    "author",
+                    "venue-statistics",
+                    {"limit": 1000},
+                    endpoint_name=endpoint_name,
+                )
+                if self.debug:
+                    print(f"{endpoint_name}: count {count} rows {len(result.rows)}")
+                self.assertEqual({}, result.errors)
+                self.assertEqual("Q2399315", result.params["q"])
+                self.assertEqual("Table", result.default_view)
+                self.assertGreaterEqual(count, 99)
+                self.assertEqual(count, len(result.rows))
+                venues = [row["venue"] for row in result.rows]
+                self.assertIn("http://www.wikidata.org/entity/Q976454", venues)
+                publications = self.aspect_queries.run(
+                    "author",
+                    "list-of-publications",
+                    {"q": "Q2399315"},
+                    endpoint_name=endpoint_name,
+                    count=True,
+                )
+                self.assertGreaterEqual(int(publications.rows[0]["count"]), 314)
+
     def test_first_working_endpoint(self):
         """
         test that an endpoint that does not answer is skipped
